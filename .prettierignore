@@ -1,0 +1,22 @@
+# ignore artifacts:
+infrastructure
+.github
+
+.eslintrc.json
+.gitguardian.yml
+.yarn/releases/yarn-3.7.0.cjs
+buildspec.yml
+global.d.ts
+jest.config.js
+jest.setup.js
+jest/__mocks__/**
+**/README.md
+next.config.js
+scripts/**
+src/__tests__/**
+src/assets/styles/fonts/**
+task-definition.dev.json
+task-definition.prod.json
+task-definition.staging.json
+task-definition.template.json
+tsconfig.json

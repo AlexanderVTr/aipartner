@@ -1,0 +1,63 @@
+@use '@/designSystem/theme/variables' as *;
+@use '@/designSystem/theme/mixins' as *;
+
+.button {
+  @include button-base;
+  @include button-size('lg');
+  min-width: $button-min-width;
+  gap: $button-gap;
+  line-height: $line-height-normal;
+}
+
+.primary {
+  @include gradient-primary;
+  color: var(--button-text-color);
+  border: none;
+  font-weight: $font-weight-semibold;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--white-overlay);
+    opacity: 0;
+    transition: opacity $transition-base $transition-ease;
+  }
+
+  @include hover-only {
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.secondary {
+  border-color: transparent;
+  position: relative;
+  background: var(--background);
+  border: 2px solid transparent;
+  border-radius: $border-radius-pill;
+
+  @include gradient-border-shadow;
+
+  @include hover-only {
+    background: var(--button-secondary-hover);
+    border-color: transparent;
+  }
+}
+
+// Mobile styles
+@include mobile-only {
+  .button {
+    @include button-size('md');
+  }
+
+  .secondary {
+    min-width: auto;
+  }
+}

@@ -1,0 +1,100 @@
+:root {
+  // ===== BRAND COLORS =====
+  --gradient-start: #faca51;
+  --gradient-mid1: #ff69b4;
+  --gradient-mid2: #fa4a6f;
+  --gradient-end: #c2185b;
+
+  // ===== SEMANTIC COLORS =====
+  --white: #ffffff;
+  --black: #000000;
+
+  --foreground: #171717;
+  --background: #ffffff;
+  --background-dark: #ffffff;
+  --background-brand: #fa4a6f;
+
+  // Text colors
+  --text-color: #77787a;
+  --title-color: #333437;
+  --input-text-color: #333437;
+  --input-placeholder-color: #bebebe;
+  --input-text-muted-color: #d2d2d3;
+  --button-text-color: #ffffff;
+  --button-ghost-text-color: #333437;
+
+  // ===== FORM COLORS =====
+  --form-field-bg-color: #ffffff;
+  --form-field-filled-bg-color: #7666d7;
+  --form-field-border-color: #77787a;
+  --form-field-error-color: #e14964;
+  --form-field-ghost-filled-bg-color: #e14964;
+  --form-field-ghost-border-color: #d2d2d3;
+
+  // ===== BUTTON COLORS =====
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+
+  // ===== STATE COLORS =====
+  --up-mover-color: #3bd78c;
+  --down-mover-color: #e14964;
+
+  // ===== COMPONENT COLORS =====
+  --prize-text-color: #ffffff;
+  --prize-bg-color: #7666d7;
+
+  --gallery-title-color: #ffffff;
+  --gallery-item-text-color: #ffffff;
+  --gallery-title-bg-color: #7666d7;
+  --gallery-item-border-color: #000000;
+
+  --dashboard-card-border-color: #f5f5f5;
+  --dashboard-card-fill-color: #ffffff;
+  --dashboard-filled-bg-color: #fafafb;
+
+  // ===== GRADIENTS =====
+  --gradient-primary: linear-gradient(
+    90deg,
+    var(--gradient-start) 0%,
+    var(--gradient-mid1) 30%,
+    var(--gradient-mid2) 70%,
+    var(--gradient-end) 100%
+  );
+
+  --gradient-background: linear-gradient(
+    180deg,
+    var(--background-dark) 46.35%,
+    var(--background-brand) 119.01%
+  );
+
+  --gradient-shader-top: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    #000000 100%
+  );
+
+  --gradient-shader-bottom: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    #000000 100%
+  );
+
+  // ===== RGBA UTILITIES =====
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+  --white-overlay: rgba(255, 255, 255, 0.1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-dark: #23273a;
+    --background-brand: #fa4a6f;
+    --foreground: #ededed;
+    --button-primary-hover: #ccc;
+    --button-secondary-hover: #1a1a1a;
+    --gray-rgb: 255, 255, 255;
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
+  }
+}

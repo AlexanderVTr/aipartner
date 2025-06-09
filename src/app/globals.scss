@@ -1,0 +1,143 @@
+@use '@/designSystem/theme/reset' as *;
+@use '@/designSystem/theme/colors.global' as *;
+@use '@/designSystem/theme/resources' as *;
+@use '@/designSystem/theme/typography' as *;
+
+:root {
+  --background-dark: #ffffff;
+  --background-brand: #fa4a6f;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-dark: #23273a;
+    --background-brand: #fa4a6f;
+    --foreground: #ededed;
+  }
+}
+
+html,
+body {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--gradient-background);
+  font-family:
+    var(--font-roboto-flex),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 18px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+a,
+p,
+li {
+  font-size: 18px;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+}
+
+/* Header typography with Fira Sans */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:
+    var(--font-fira-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-weight: 600;
+  line-height: 1.2;
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--gradient-mid2);
+  display: inline-block;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.shade {
+  position: absolute;
+  opacity: 0.7;
+  background: radial-gradient(
+    250px 232px at 35%,
+    #fa4a6fcc 0%,
+    #fa4a6f99 31%,
+    #fa4a6f4d 54%,
+    #fa4a6f1a 88%,
+    #0000 100%
+  );
+  border-radius: 288px / 244px;
+  width: 482px;
+  height: 321px;
+  position: absolute;
+  bottom: -204px;
+  right: -198px;
+  transform: rotate(10deg);
+}
+
+.shade2 {
+  position: absolute;
+  opacity: 0.7;
+  background: radial-gradient(
+    250px 232px at 35%,
+    #fa4a6fcc 0%,
+    #fa4a6f99 31%,
+    #fa4a6f4d 54%,
+    #fa4a6f1a 88%,
+    #0000 100%
+  );
+  border-radius: 288px / 244px;
+  width: 482px;
+  height: 321px;
+  position: absolute;
+  bottom: -184px;
+  right: -169px;
+  transform: rotate(21deg);
+}
+
+.cl-pricingTableCardFooterButton {
+  background: var(--gradient-primary);
+}

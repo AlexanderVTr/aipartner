@@ -1,0 +1,136 @@
+// ===== TYPOGRAPHY =====
+// Font Sizes
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+$font-size-4xl: 36px;
+$font-size-5xl: 48px;
+
+// Header Sizes
+$font-size-h1: 2.5rem; // 40px
+$font-size-h2: 2rem; // 32px
+$font-size-h3: 1.5rem; // 24px
+$font-size-h4: 1.25rem; // 20px
+$font-size-h5: 1.125rem; // 18px
+$font-size-h6: 1rem; // 16px
+
+// Font Weights
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// Line Heights
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+// ===== SPACING =====
+$space-xs: 4px;
+$space-sm: 8px;
+$space-md: 12px;
+$space-lg: 16px;
+$space-xl: 20px;
+$space-2xl: 24px;
+$space-3xl: 32px;
+$space-4xl: 40px;
+$space-5xl: 48px;
+$space-6xl: 56px;
+$space-7xl: 64px;
+$space-8xl: 72px;
+$space-9xl: 80px;
+
+// Legacy spacing (keep for backward compatibility)
+$space-small: $space-xs;
+$space-x: $space-sm;
+$space-medium: $space-md;
+$space-2x: $space-lg;
+$space-3x: $space-2xl;
+$space-4x: $space-3xl;
+$space-5x: $space-4xl;
+$space-6x: $space-5xl;
+$space-7x: $space-6xl;
+$space-8x: $space-7xl;
+$space-9x: $space-8xl;
+$space-10x: $space-9xl;
+
+// ===== BORDER RADIUS =====
+$border-radius-none: 0px;
+$border-radius-xs: 2px;
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 16px;
+$border-radius-xl: 24px;
+$border-radius-2xl: 32px;
+$border-radius-full: 50%;
+$border-radius-pill: 128px;
+
+// Component specific
+$button-default-border-radius: $border-radius-md;
+$input-default-border-radius: $border-radius-md;
+$image-default-border-radius: $border-radius-md;
+$badge-default-border-radius: $border-radius-md;
+
+// Legacy naming
+$border-radius-small: $border-radius-sm;
+$border-radius-medium: $border-radius-md;
+$border-radius-large: $border-radius-lg;
+$border-radius-extra-large: $border-radius-xl;
+$border-radius-2-extra-large: $border-radius-2xl;
+
+// ===== SIZING =====
+// Button sizing
+$button-height-sm: 32px;
+$button-height-md: 40px;
+$button-height-lg: 48px;
+$button-height-xl: 56px;
+
+$button-padding-sm: 0 12px;
+$button-padding-md: 0 16px;
+$button-padding-lg: 0 20px;
+$button-padding-xl: 0 24px;
+
+$button-min-width: 158px;
+$button-gap: $space-sm;
+
+// Container sizing
+$container-max-width: 880px;
+$container-padding: $space-xl;
+
+// Content widths
+$content_container_width: 375px;
+$content_container_width_second: 660px;
+
+// ===== BREAKPOINTS =====
+$breakpoint-mobile: 440px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
+$breakpoint-wide: 1440px;
+
+// Legacy naming
+$sp_bp: $breakpoint-mobile;
+$dt_bp: $breakpoint-wide;
+
+// ===== TRANSITIONS =====
+$transition-fast: 0.15s;
+$transition-base: 0.2s;
+$transition-slow: 0.3s;
+
+$transition-ease: ease;
+$transition-ease-in: ease-in;
+$transition-ease-out: ease-out;
+$transition-ease-in-out: ease-in-out;
+
+// z-index
+$z-index-hidden: -1;
+$z-index-default: 1;
+$z-index-navigation: 2;
+$z-index-header: 15;
+$z-index-fullscreen: 30;
+$z-index-menu: 50;
+$z-index-modal: 100;
+$z-index-close-button: 101;

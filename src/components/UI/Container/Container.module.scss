@@ -1,0 +1,5 @@
+@use '@/designSystem/theme/mixins' as *;
+
+.container {
+  @include container;
+}

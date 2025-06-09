@@ -1,0 +1,194 @@
+@use 'variables' as *;
+
+// ===== TRANSITION MIXINS =====
+@mixin transition-base {
+  transition:
+    background $transition-base $transition-ease,
+    color $transition-base $transition-ease,
+    border-color $transition-base $transition-ease;
+}
+
+@mixin transition-fast {
+  transition: all $transition-fast $transition-ease;
+}
+
+@mixin transition-slow {
+  transition: all $transition-slow $transition-ease;
+}
+
+// ===== GRADIENT MIXINS =====
+@mixin gradient-primary {
+  background: var(--gradient-primary);
+}
+
+@mixin gradient-text {
+  background: var(--gradient-primary);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--gradient-mid2);
+  display: inline-block;
+}
+
+@mixin gradient-border($width: 1px) {
+  border: $width solid transparent;
+  background:
+    linear-gradient(var(--background), var(--background)) padding-box,
+    var(--gradient-primary) border-box;
+}
+
+// For box-shadow gradient borders
+@mixin gradient-border-shadow {
+  box-shadow:
+    0 0 0 1px var(--gradient-start),
+    0 0 0 2px var(--gradient-mid1),
+    0 0 0 3px var(--gradient-mid2);
+}
+
+// ===== BREAKPOINT MIXINS =====
+@mixin mobile-only {
+  @media (max-width: #{$breakpoint-mobile - 1px}) {
+    @content;
+  }
+}
+
+@mixin mobile-up {
+  @media (min-width: #{$breakpoint-mobile}) {
+    @content;
+  }
+}
+
+@mixin tablet-up {
+  @media (min-width: #{$breakpoint-tablet}) {
+    @content;
+  }
+}
+
+@mixin desktop-up {
+  @media (min-width: #{$breakpoint-desktop}) {
+    @content;
+  }
+}
+
+@mixin wide-up {
+  @media (min-width: #{$breakpoint-wide}) {
+    @content;
+  }
+}
+
+@mixin hover-only {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+// ===== LAYOUT MIXINS =====
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@mixin container {
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+  width: 100%;
+}
+
+// ===== TYPOGRAPHY MIXINS =====
+@mixin heading-base {
+  font-family:
+    var(--font-fira-sans),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  margin: 0;
+}
+
+@mixin h1 {
+  @include heading-base;
+  font-size: $font-size-h1;
+  font-weight: $font-weight-bold;
+}
+
+@mixin h2 {
+  @include heading-base;
+  font-size: $font-size-h2;
+}
+
+@mixin h3 {
+  @include heading-base;
+  font-size: $font-size-h3;
+}
+
+// ===== BUTTON MIXINS =====
+@mixin button-base {
+  appearance: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  text-decoration: none;
+  border-radius: $border-radius-pill;
+  @include transition-base;
+}
+
+@mixin button-size($size: 'md') {
+  @if $size == 'sm' {
+    height: $button-height-sm;
+    padding: $button-padding-sm;
+    font-size: $font-size-sm;
+  } @else if $size == 'lg' {
+    height: $button-height-lg;
+    padding: $button-padding-lg;
+    font-size: $font-size-lg;
+  } @else if $size == 'xl' {
+    height: $button-height-xl;
+    padding: $button-padding-xl;
+    font-size: $font-size-xl;
+  } @else {
+    height: $button-height-md;
+    padding: $button-padding-md;
+    font-size: $font-size-base;
+  }
+}
+
+// ===== UTILITY MIXINS =====
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
