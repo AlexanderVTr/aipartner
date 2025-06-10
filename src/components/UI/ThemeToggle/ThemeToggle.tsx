@@ -1,4 +1,5 @@
 import styles from './ThemeToggle.module.scss'
+import { Sun, Moon } from 'lucide-react'
 
 interface ThemeToggleProps {
   className?: string
@@ -14,9 +15,8 @@ export default function ThemeToggle({ className }: ThemeToggleProps) {
         aria-label='Toggle theme'
       />
       <label htmlFor='theme-toggle' className={styles.label}>
-        <span className={styles.sunIcon}>☀️</span>
-        <span className={styles.moonIcon}>🌙</span>
-        <span className={styles.slider}></span>
+        <Sun className={styles.sunIcon} size={18} />
+        <Moon className={styles.moonIcon} size={18} />
       </label>
     </div>
   )

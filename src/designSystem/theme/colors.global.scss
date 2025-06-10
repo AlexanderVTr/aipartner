@@ -9,31 +9,33 @@
   --white: #ffffff;
   --black: #000000;
 
-  --foreground: #171717;
-  --background: #ffffff;
-  --background-dark: #ffffff;
+  // ===== DEFAULT DARK THEME =====
+  --foreground: #ededed;
+  --background: #23273a;
+  --background-dark: #23273a;
   --background-brand: #fa4a6f;
 
   // Text colors
-  --text-color: #77787a;
-  --title-color: #333437;
-  --input-text-color: #333437;
-  --input-placeholder-color: #bebebe;
-  --input-text-muted-color: #d2d2d3;
+  --text-color: #ccc;
+  --title-color: #ededed;
+  --input-text-color: #ededed;
+  --input-placeholder-color: #999;
+  --input-text-muted-color: #666;
   --button-text-color: #ffffff;
-  --button-ghost-text-color: #333437;
+  --button-ghost-text-color: #ededed;
+  --icons-color: #ffffff;
 
   // ===== FORM COLORS =====
-  --form-field-bg-color: #ffffff;
+  --form-field-bg-color: #2a2a2a;
   --form-field-filled-bg-color: #7666d7;
-  --form-field-border-color: #77787a;
+  --form-field-border-color: #555;
   --form-field-error-color: #e14964;
   --form-field-ghost-filled-bg-color: #e14964;
-  --form-field-ghost-border-color: #d2d2d3;
+  --form-field-ghost-border-color: #666;
 
   // ===== BUTTON COLORS =====
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
+  --button-primary-hover: #ccc;
+  --button-secondary-hover: #1a1a1a;
 
   // ===== STATE COLORS =====
   --up-mover-color: #3bd78c;
@@ -48,9 +50,9 @@
   --gallery-title-bg-color: #7666d7;
   --gallery-item-border-color: #000000;
 
-  --dashboard-card-border-color: #f5f5f5;
-  --dashboard-card-fill-color: #ffffff;
-  --dashboard-filled-bg-color: #fafafb;
+  --dashboard-card-border-color: #333;
+  --dashboard-card-fill-color: #2a2a2a;
+  --dashboard-filled-bg-color: #1a1a1a;
 
   // ===== GRADIENTS =====
   --gradient-primary: linear-gradient(
@@ -80,21 +82,85 @@
   );
 
   // ===== RGBA UTILITIES =====
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+  --gray-rgb: 255, 255, 255;
+  --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+  --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
   --white-overlay: rgba(255, 255, 255, 0.1);
 }
 
-@media (prefers-color-scheme: dark) {
+// ===== SYSTEM LIGHT MODE (Override dark default) =====
+@media (prefers-color-scheme: light) {
   :root {
-    --background-dark: #23273a;
+    --background-dark: #ffffff;
+    --background: #ffffff;
     --background-brand: #fa4a6f;
-    --foreground: #ededed;
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-    --gray-rgb: 255, 255, 255;
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
+    --foreground: #171717;
+    --button-primary-hover: #383838;
+    --button-secondary-hover: #f2f2f2;
+    --gray-rgb: 0, 0, 0;
+    --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
+    --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
+    --form-field-bg-color: #ffffff;
+    --form-field-border-color: #77787a;
+    --text-color: #77787a;
+    --title-color: #333437;
+    --dashboard-card-fill-color: #ffffff;
+    --dashboard-filled-bg-color: #fafafb;
+    --dashboard-card-border-color: #f5f5f5;
+    --icons-color: #1a1a1a;
   }
+}
+
+// ===== MANUAL DARK MODE (Override system preference) =====
+body:has(#theme-toggle:not(:checked)) {
+  --background-dark: #23273a;
+  --background: #23273a;
+  --background-brand: #fa4a6f;
+  --foreground: #ededed;
+  --button-primary-hover: #ccc;
+  --button-secondary-hover: #1a1a1a;
+  --gray-rgb: 255, 255, 255;
+  --gray-alpha-100: rgba(255, 255, 255, 0.06);
+  --gray-alpha-200: rgba(255, 255, 255, 0.145);
+  --form-field-bg-color: #2a2a2a;
+  --form-field-border-color: #555;
+  --text-color: #ccc;
+  --title-color: #ffffff;
+  --dashboard-card-fill-color: #2a2a2a;
+  --dashboard-filled-bg-color: #1a1a1a;
+  --dashboard-card-border-color: #333;
+  --icons-color: #ffffff;
+
+  --gradient-background: linear-gradient(
+    180deg,
+    #23273a 46.35%,
+    #fa4a6f 119.01%
+  );
+}
+
+// ===== MANUAL LIGHT MODE (Override system preference) =====
+body:has(#theme-toggle:checked) {
+  --background-dark: #ffffff;
+  --background: #ffffff;
+  --background-brand: #fa4a6f;
+  --foreground: #171717;
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-100: rgba(0, 0, 0, 0.05);
+  --gray-alpha-200: rgba(0, 0, 0, 0.08);
+  --form-field-bg-color: #ffffff;
+  --form-field-border-color: #77787a;
+  --text-color: #77787a;
+  --title-color: #333437;
+  --dashboard-card-fill-color: #ffffff;
+  --dashboard-filled-bg-color: #fafafb;
+  --dashboard-card-border-color: #f5f5f5;
+  --icons-color: #1a1a1a;
+
+  --gradient-background: linear-gradient(
+    180deg,
+    #ffffff 46.35%,
+    #fa4a6f 119.01%
+  );
 }

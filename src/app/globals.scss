@@ -3,47 +3,7 @@
 @use '@/designSystem/theme/resources' as *;
 @use '@/designSystem/theme/typography' as *;
 
-:root {
-  --background-dark: #ffffff;
-  --background-brand: #fa4a6f;
-  --foreground: #171717;
-}
-
-// Default dark mode via media query (lower specificity)
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-dark: #23273a;
-    --background-brand: #fa4a6f;
-    --foreground: #ededed;
-  }
-}
-
-// Override media query dark mode when theme toggle is not checked (light mode forced)
-body:has(#theme-toggle:not(:checked)) {
-  --background-dark: #ffffff;
-  --background: #ffffff;
-  --background-brand: #fa4a6f;
-  --foreground: #171717;
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-100: rgba(0, 0, 0, 0.05);
-  --gray-alpha-200: rgba(0, 0, 0, 0.08);
-  --form-field-bg-color: #ffffff;
-  --form-field-border-color: #77787a;
-  --text-color: #77787a;
-  --title-color: #333437;
-  --dashboard-card-fill-color: #ffffff;
-  --dashboard-filled-bg-color: #fafafb;
-  --dashboard-card-border-color: #f5f5f5;
-
-  // Перезаписываем градиент фона для светлой темы
-  --gradient-background: linear-gradient(
-    180deg,
-    #ffffff 46.35%,
-    #fa4a6f 119.01%
-  );
-}
+// Theme variables are now managed in colors.global.scss
 
 html,
 body {
