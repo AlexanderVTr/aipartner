@@ -63,7 +63,7 @@ export default function Chat() {
               {message.content}
             </div>
           ))}
-        {isLoading && <div className={styles.typing}>Aisha is typing...</div>}
+        {isLoading && <div className={styles.typing}>Aisha is typing</div>}
       </div>
       <div className={styles.input}>
         <textarea
