@@ -109,6 +109,7 @@
   margin: 0 auto;
   padding: 0 $container-padding;
   width: 100%;
+  height: 100%;
 }
 
 // ===== TYPOGRAPHY MIXINS =====
@@ -120,6 +121,18 @@
     sans-serif;
   font-weight: $font-weight-semibold;
   line-height: $line-height-tight;
+  margin: 0;
+}
+
+@mixin body-base {
+  font-family:
+    var(--font-roboto-flex),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
   margin: 0;
 }
 
@@ -171,6 +184,51 @@
     height: $button-height-md;
     padding: $button-padding-md;
     font-size: $font-size-base;
+  }
+}
+
+// ===== GLASS EFFECTS =====
+@mixin liquid-glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.02) 100%
+    );
+    pointer-events: none;
+    opacity: 0.8;
+    transition: opacity $transition-base $transition-ease;
+  }
+
+  @include hover-only {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 12px 48px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+
+    &::before {
+      opacity: 1;
+    }
   }
 }
 

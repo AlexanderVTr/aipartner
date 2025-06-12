@@ -51,6 +51,28 @@
   }
 }
 
+.round {
+  min-width: 36px;
+  max-width: 36px;
+  min-height: 36px;
+  max-height: 36px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  flex-grow: 0;
+  @include liquid-glass;
+
+  // Prevent SVG icons from shrinking
+  svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+  }
+}
+
 // Mobile styles
 @include mobile-only {
   .button {

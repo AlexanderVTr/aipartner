@@ -16,7 +16,7 @@
   --background-brand: #fa4a6f;
 
   // Text colors
-  --text-color: #ccc;
+  --text-color: #000000;
   --title-color: #ededed;
   --input-text-color: #ededed;
   --input-placeholder-color: #999;
@@ -26,7 +26,7 @@
   --icons-color: #ffffff;
 
   // ===== FORM COLORS =====
-  --form-field-bg-color: #2a2a2a;
+  --form-field-bg-color: rgba(0, 0, 0, 0.5);
   --form-field-filled-bg-color: #7666d7;
   --form-field-border-color: #555;
   --form-field-error-color: #e14964;
@@ -100,9 +100,9 @@
     --gray-rgb: 0, 0, 0;
     --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
     --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-    --form-field-bg-color: #ffffff;
+    --form-field-bg-color: rgba(255, 255, 255, 0.5);
     --form-field-border-color: #77787a;
-    --text-color: #77787a;
+    --text-color: #000000;
     --title-color: #333437;
     --dashboard-card-fill-color: #ffffff;
     --dashboard-filled-bg-color: #fafafb;
@@ -122,9 +122,9 @@ body:has(#theme-toggle:not(:checked)) {
   --gray-rgb: 255, 255, 255;
   --gray-alpha-100: rgba(255, 255, 255, 0.06);
   --gray-alpha-200: rgba(255, 255, 255, 0.145);
-  --form-field-bg-color: #2a2a2a;
+  --form-field-bg-color: rgba(0, 0, 0, 0.5);
   --form-field-border-color: #555;
-  --text-color: #ccc;
+  --text-color: #ffffff;
   --title-color: #ffffff;
   --dashboard-card-fill-color: #2a2a2a;
   --dashboard-filled-bg-color: #1a1a1a;
@@ -151,7 +151,7 @@ body:has(#theme-toggle:checked) {
   --gray-alpha-200: rgba(0, 0, 0, 0.08);
   --form-field-bg-color: #ffffff;
   --form-field-border-color: #77787a;
-  --text-color: #77787a;
+  --text-color: #000000;
   --title-color: #333437;
   --dashboard-card-fill-color: #ffffff;
   --dashboard-filled-bg-color: #fafafb;

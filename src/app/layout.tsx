@@ -1,15 +1,7 @@
 import type { Metadata } from 'next'
-import { Container } from '@/components/UI'
 import { Fira_Sans, Roboto, Roboto_Flex } from 'next/font/google'
 import './globals.scss'
-import {
-  ClerkProvider,
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from '@clerk/nextjs'
+import { ClerkProvider } from '@clerk/nextjs'
 
 const roboto = Roboto({
   variable: '--font-roboto',
@@ -44,21 +36,9 @@ export default function RootLayout({
       <html lang='en'>
         <body
           className={`${roboto.variable} ${robotoFlex.variable} ${firaSans.variable}`}>
-          <header>
-            <Container>
-              <h1>AiGirls</h1>
-              <SignedOut>
-                <SignInButton />
-                <SignUpButton />
-              </SignedOut>
-              <SignedIn>
-                <UserButton />
-              </SignedIn>
-            </Container>
-          </header>
-          <main>{children}</main>
           <div className='shade'></div>
           <div className='shade2'></div>
+          {children}
         </body>
       </html>
     </ClerkProvider>

@@ -1,24 +1,31 @@
-import { Button, Container, ThemeToggle } from '@/components/UI'
+import { Container, ThemeToggle } from '@/components/UI'
+import Chat from '@/components/Chat/Chat'
+import Credits from '@/components/Credits/Credits'
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from '@clerk/nextjs'
 
 export default function Home() {
   return (
     <Container>
-      <ThemeToggle />
-
-      <Button
-        variant='primary'
-        href='https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-        target='_blank'
-        rel='noopener noreferrer'>
-        Deploy now
-      </Button>
-      <Button
-        variant='secondary'
-        href='https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app'
-        target='_blank'
-        rel='noopener noreferrer'>
-        Read our docs
-      </Button>
+      <Chat />
+      <footer className='footer'>
+        <Credits />
+        <div>
+          <ThemeToggle />
+          <SignedOut>
+            <SignInButton />
+            <SignUpButton />
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
+        </div>
+      </footer>
     </Container>
   )
 }

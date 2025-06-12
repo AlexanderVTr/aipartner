@@ -1,0 +1,14 @@
+@use '@/designSystem/theme/variables' as *;
+@use '@/designSystem/theme/mixins' as *;
+
+.credits {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: $font-size-sm;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+
+  .sparklesIcon {
+    color: #ffd700;
+  }
+}

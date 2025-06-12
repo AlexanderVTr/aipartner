@@ -1,9 +1,7 @@
+@use '@/designSystem/theme/mixins' as *;
 @use '@/designSystem/theme/reset' as *;
 @use '@/designSystem/theme/colors.global' as *;
 @use '@/designSystem/theme/resources' as *;
-@use '@/designSystem/theme/typography' as *;
-
-// Theme variables are now managed in colors.global.scss
 
 html,
 body {
@@ -15,26 +13,15 @@ body {
 body {
   color: var(--foreground);
   background: var(--gradient-background);
-  font-family:
-    var(--font-roboto-flex),
-    system-ui,
-    -apple-system,
-    sans-serif;
-  font-size: 18px;
+  @include body-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 a,
 p,
 li {
-  font-size: 18px;
+  @include body-base;
 }
 
 a {
@@ -48,42 +35,14 @@ a {
   }
 }
 
-/* Header typography with Fira Sans */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family:
-    var(--font-fira-sans),
-    system-ui,
-    -apple-system,
-    sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-  margin: 0;
-}
-
 h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
+  @include h1;
   background: var(--gradient-primary);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: var(--gradient-mid2);
   display: inline-block;
-}
-
-h2 {
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
 }
 
 .shade {
@@ -104,6 +63,7 @@ h3 {
   bottom: -204px;
   right: -198px;
   transform: rotate(10deg);
+  z-index: $z-index-default;
 }
 
 .shade2 {
@@ -124,8 +84,13 @@ h3 {
   bottom: -184px;
   right: -169px;
   transform: rotate(21deg);
+  z-index: $z-index-default;
 }
 
-.cl-pricingTableCardFooterButton {
-  background: var(--gradient-primary);
+.footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: $z-index-header;
 }
