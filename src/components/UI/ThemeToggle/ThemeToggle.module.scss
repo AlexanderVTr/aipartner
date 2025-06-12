@@ -5,6 +5,12 @@
   position: relative;
   display: inline-block;
   margin-right: 10px;
+
+  &:hover {
+    svg {
+      color: var(--gradient-start);
+    }
+  }
 }
 
 .checkbox {

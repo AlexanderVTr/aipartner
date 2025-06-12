@@ -43,6 +43,7 @@ h1 {
   -webkit-text-fill-color: transparent;
   color: var(--gradient-mid2);
   display: inline-block;
+  font-size: 32px;
 }
 
 .shade {
@@ -93,4 +94,11 @@ h1 {
   align-items: center;
   justify-content: space-between;
   z-index: $z-index-header;
+}
+
+// Clerk overrides
+
+.cl-avatarBox {
+  width: 24px;
+  height: 24px;
 }
