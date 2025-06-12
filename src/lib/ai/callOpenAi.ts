@@ -1,14 +1,31 @@
 'use server'
 
 import OpenAI from 'openai'
+import { SYSTEM_PROMPT } from './prompt'
 
-interface CallAiOptions {
-  message?: string
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system'
+  content: string
+}
+
+export interface Options {
+  messages: ChatMessage[]
   reasoning?: { effort: 'low' | 'high' } // For enhanced reasoning
 }
 
-export default async function callOpenAi(options: CallAiOptions = {}) {
-  const { message = 'Hello, how are you?', reasoning } = options
+const chatMessages: ChatMessage[] = [
+  {
+    role: 'system',
+    content: SYSTEM_PROMPT,
+  },
+  {
+    role: 'assistant',
+    content: "Hi, there! I'm Aisha, how are you today?",
+  },
+]
+
+export default async function callOpenAi(options: Options) {
+  const { messages, reasoning } = options
 
   const openai = new OpenAI({
     baseURL: 'https://openrouter.ai/api/v1',
@@ -19,12 +36,15 @@ export default async function callOpenAi(options: CallAiOptions = {}) {
     },
   })
 
+  // Add new messages to the chat history
+  chatMessages.push(...messages)
+
   // Prepare the request body
   const requestBody: OpenAI.Chat.ChatCompletionCreateParams & {
     reasoning?: { effort: 'low' | 'high' }
   } = {
     model: 'x-ai/grok-3-mini-beta',
-    messages: [{ role: 'user', content: message }],
+    messages: chatMessages,
   }
 
   // Add reasoning parameter if specified
