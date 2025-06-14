@@ -232,6 +232,19 @@
   }
 }
 
+@mixin liquid-glass-black {
+  background: rgb(85, 56, 74);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(162, 161, 161, 0.1);
+  transition: background $transition-base $transition-ease;
+
+  @include hover-only {
+    background: rgb(106, 67, 91);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+}
+
 // ===== UTILITY MIXINS =====
 @mixin visually-hidden {
   position: absolute !important;
