@@ -7,13 +7,15 @@ export const CHAT_MESSAGES = {
 
   // UI messages
   UI_TYPING: 'Aisha is typing',
-  UI_PLACEHOLDER: "I am Aisha, let's chat!",
-  UI_TITLE: 'AiGirls',
+  UI_PLACEHOLDER: "Let's chat!",
+  UI_TITLE: 'AiSha',
 
   // Actions
   ACTION_SEND: 'Send',
   ACTION_CLEAR: 'Clear Chat',
   ACTION_EXAMPLE: 'Example',
+  UI_DESCRIPTION:
+    'Meet your AI girlfriend — a smart, friendly virtual companion here to chat, have fun, and keep you company anytime. Whether you’re looking for light conversation, a bit of laughter, or just someone to talk to, she’s always ready to brighten your day with a personal touch.',
 } as const
 
 // System constants (don't need localization)
