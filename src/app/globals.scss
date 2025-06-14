@@ -35,17 +35,6 @@ a {
   }
 }
 
-h1 {
-  @include h1;
-  background: var(--gradient-primary);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--gradient-mid2);
-  display: inline-block;
-  font-size: 32px;
-}
-
 .shade {
   position: absolute;
   opacity: 0.7;

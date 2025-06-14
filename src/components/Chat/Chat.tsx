@@ -1,5 +1,6 @@
 'use client'
 
+import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
 import { useRef, useState, useEffect } from 'react'
@@ -47,7 +48,6 @@ export default function Chat() {
   const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
     if (!input.trim() || isLoading) return
 
-    // Создаём пользовательское сообщение прямо в коде
     const userMessage = {
       role: CHAT_ROLES.USER,
       content: input.trim(),
@@ -85,7 +85,7 @@ export default function Chat() {
 
   return (
     <div className={styles.chat}>
-      <h1>{CHAT_MESSAGES.UI_TITLE}</h1>
+      <Header isVisible={messages.length === 0} />
       <div className={styles.messages_container} ref={messagesContainerRef}>
         {messages &&
           messages.map((message, index) => (

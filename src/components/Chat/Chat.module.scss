@@ -9,10 +9,6 @@
   height: calc(100% - 34px);
   position: relative;
   z-index: $z-index-default;
-
-  h1 {
-    margin: 4px 0 4px 16px;
-  }
 }
 
 .messages_container {
@@ -119,7 +115,6 @@
 }
 
 .arrow_down {
-  @include liquid-glass-black;
   position: absolute;
   top: -40px;
   right: 50%;
@@ -137,6 +132,7 @@
   justify-content: center;
   flex-shrink: 0;
   flex-grow: 0;
+  @include liquid-glass-black;
 
   // Prevent SVG icons from shrinking
   svg {

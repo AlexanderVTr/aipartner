@@ -7,7 +7,7 @@ export const CHAT_MESSAGES_EN = {
 
   // UI messages
   UI_TYPING: 'Aisha is typing',
-  UI_PLACEHOLDER: "I am Aisha, let's chat!",
+  UI_PLACEHOLDER: "Let's chat!",
   UI_TITLE: 'AiGirls',
 
   // Actions
