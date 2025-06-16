@@ -1,60 +1,35 @@
 :root {
-  // ===== BRAND COLORS =====
+  // ===== BRAND COLORS (Static) =====
   --gradient-start: #ffd700;
   --gradient-mid1: #ff69b4;
   --gradient-mid2: #fa4a6f;
   --gradient-end: #c2185b;
+  --background-brand: #fa4a6f;
 
-  // ===== SEMANTIC COLORS =====
+  // ===== SEMANTIC COLORS (Static) =====
   --white: #ffffff;
   --black: #000000;
 
-  // ===== DEFAULT DARK THEME =====
-  --foreground: #ededed;
-  --background: #23273a;
-  --background-dark: #23273a;
-  --background-brand: #fa4a6f;
-
-  // Text colors
-  --text-color: #000000;
-  --title-color: #ededed;
-  --input-text-color: #ededed;
-  --input-placeholder-color: #b5b4b4;
-  --input-text-muted-color: #666;
-  --button-text-color: #ffffff;
-  --button-ghost-text-color: #ededed;
-  --icons-color: #ffffff;
-
-  // ===== FORM COLORS =====
-  --form-field-bg-color: rgba(0, 0, 0, 0.5);
-  --form-field-filled-bg-color: #7666d7;
-  --form-field-border-color: #555;
-  --form-field-error-color: #e14964;
-  --form-field-ghost-filled-bg-color: #e14964;
-  --form-field-ghost-border-color: #666;
-
-  // ===== BUTTON COLORS =====
-  --button-primary-hover: #ccc;
-  --button-secondary-hover: #1a1a1a;
-
-  // ===== STATE COLORS =====
+  // ===== STATE COLORS (Static) =====
   --up-mover-color: #3bd78c;
   --down-mover-color: #e14964;
+  --form-field-error-color: #e14964;
 
-  // ===== COMPONENT COLORS =====
+  // ===== COMPONENT COLORS (Static) =====
   --prize-text-color: #ffffff;
   --prize-bg-color: #7666d7;
+  --form-field-filled-bg-color: #7666d7;
+  --form-field-ghost-filled-bg-color: #e14964;
+  --form-field-ghost-border-color: #666;
+  --input-text-muted-color: #666;
+  --button-text-color: #ffffff;
 
   --gallery-title-color: #ffffff;
   --gallery-item-text-color: #ffffff;
   --gallery-title-bg-color: #7666d7;
   --gallery-item-border-color: #000000;
 
-  --dashboard-card-border-color: #333;
-  --dashboard-card-fill-color: #2a2a2a;
-  --dashboard-filled-bg-color: #1a1a1a;
-
-  // ===== GRADIENTS =====
+  // ===== GRADIENTS (Static) =====
   --gradient-primary: linear-gradient(
     90deg,
     var(--gradient-start) 0%,
@@ -63,74 +38,111 @@
     var(--gradient-end) 100%
   );
 
-  --gradient-background: linear-gradient(
-    180deg,
-    var(--background-dark) 46.35%,
-    var(--background-brand) 119.01%
-  );
-
   --gradient-shader-top: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
     #000000 100%
   );
-
   --gradient-shader-bottom: linear-gradient(
     180deg,
     rgba(0, 0, 0, 0) 0%,
     #000000 100%
   );
 
-  // ===== RGBA UTILITIES =====
-  --gray-rgb: 255, 255, 255;
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-  --white-overlay: rgba(255, 255, 255, 0.1);
-}
-
-// ===== SYSTEM LIGHT MODE (Override dark default) =====
-@media (prefers-color-scheme: light) {
-  :root {
-    --background-dark: #ffffff;
-    --background: #ffffff;
-    --background-brand: #fa4a6f;
-    --foreground: #171717;
-    --button-primary-hover: #383838;
-    --button-secondary-hover: #f2f2f2;
-    --gray-rgb: 0, 0, 0;
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-    --form-field-bg-color: rgba(255, 255, 255, 0.5);
-    --form-field-border-color: #77787a;
-    --text-color: #000000;
-    --title-color: #333437;
-    --dashboard-card-fill-color: #ffffff;
-    --dashboard-filled-bg-color: #fafafb;
-    --dashboard-card-border-color: #f5f5f5;
-    --icons-color: #1a1a1a;
-  }
-}
-
-// ===== MANUAL DARK MODE (Override system preference) =====
-body:has(#theme-toggle:not(:checked)) {
-  --background-dark: #23273a;
-  --background: #23273a;
-  --background-brand: #fa4a6f;
+  // ===== DEFAULT THEME (Dark) =====
   --foreground: #ededed;
+  --background: #23273a;
+  --background-dark: #23273a;
+  --text-color: #ffffff;
+  --title-color: #ededed;
+  --input-text-color: #ededed;
+  --input-placeholder-color: #ffffff;
+  --button-ghost-text-color: #ededed;
+  --icons-color: #352424;
+  --form-field-bg-color: rgba(0, 0, 0, 0.5);
+  --form-field-border-color: #555;
   --button-primary-hover: #ccc;
   --button-secondary-hover: #1a1a1a;
+  --dashboard-card-border-color: #333;
+  --dashboard-card-fill-color: #2a2a2a;
+  --dashboard-filled-bg-color: #1a1a1a;
   --gray-rgb: 255, 255, 255;
   --gray-alpha-100: rgba(255, 255, 255, 0.06);
   --gray-alpha-200: rgba(255, 255, 255, 0.145);
+  --white-overlay: rgba(255, 255, 255, 0.1);
+  --gradient-background: linear-gradient(
+    180deg,
+    #23273a 46.35%,
+    #fa4a6f 119.01%
+  );
+  --liquid-glass-black: rgb(85, 56, 74);
+  --liquid-glass-black-border: rgba(162, 161, 161, 0.1);
+  --liquid-glass-white-hover: rgba(255, 255, 255, 0.12);
+  --liquid-glass-white-border-hover: rgba(255, 255, 255, 0.15);
+  --icons-color: #ffffff;
+  --icons-color-hover: #ffd700;
+  --logo-bg-color: #3b3c3d;
+}
+
+// ===== THEME MIXINS =====
+@mixin light-theme {
+  --foreground: #171717;
+  --background: #ffffff;
+  --background-dark: #ffffff;
+  --text-color: #202020;
+  --title-color: #202020;
+  --input-text-color: #202020;
+  --input-placeholder-color: #202020;
+  --button-ghost-text-color: #202020;
+  --icons-color: #1a1a1a;
+  --form-field-bg-color: rgba(255, 255, 255, 0.5);
+  --form-field-border-color: #77787a;
+  --button-primary-hover: #383838;
+  --button-secondary-hover: #f2f2f2;
+  --dashboard-card-border-color: #f5f5f5;
+  --dashboard-card-fill-color: #ffffff;
+  --dashboard-filled-bg-color: #fafafb;
+  --gray-rgb: 0, 0, 0;
+  --gray-alpha-100: rgba(0, 0, 0, 0.05);
+  --gray-alpha-200: rgba(0, 0, 0, 0.08);
+  --gradient-background: linear-gradient(
+    180deg,
+    #ffffff 46.35%,
+    #f98d8d 119.01%
+  );
+  --form-field-error-color: #faa9b9;
+  --form-field-border-color: #ffa0c5;
+  --liquid-glass-black: rgb(255, 255, 255);
+  --liquid-glass-black-border: rgba(162, 161, 161, 0.1);
+  --liquid-glass-black-hover: #faa9b9;
+  --liquid-glass-black-border-hover: rgba(162, 161, 161, 0.1);
+  --liquid-glass-white-hover: rgba(227, 158, 158, 0.12);
+  --liquid-glass-white-border-hover: rgba(212, 124, 124, 0.15);
+  --icons-color: #ffffff;
+  --icons-color-hover: #ffd700;
+  --gradient-start: #fa4a6f;
+}
+
+@mixin dark-theme {
+  --foreground: #ededed;
+  --background: #23273a;
+  --background-dark: #23273a;
+  --text-color: #ffffff;
+  --title-color: #ededed;
+  --input-text-color: #ededed;
+  --input-placeholder-color: #ededed;
+  --button-ghost-text-color: #ededed;
+  --icons-color: #ffffff;
   --form-field-bg-color: rgba(0, 0, 0, 0.5);
   --form-field-border-color: #555;
-  --text-color: #ffffff;
-  --title-color: #ffffff;
+  --button-primary-hover: #ccc;
+  --button-secondary-hover: #1a1a1a;
+  --dashboard-card-border-color: #333;
   --dashboard-card-fill-color: #2a2a2a;
   --dashboard-filled-bg-color: #1a1a1a;
-  --dashboard-card-border-color: #333;
-  --icons-color: #ffffff;
-
+  --gray-rgb: 255, 255, 255;
+  --gray-alpha-100: rgba(255, 255, 255, 0.06);
+  --gray-alpha-200: rgba(255, 255, 255, 0.145);
   --gradient-background: linear-gradient(
     180deg,
     #23273a 46.35%,
@@ -138,29 +150,19 @@ body:has(#theme-toggle:not(:checked)) {
   );
 }
 
-// ===== MANUAL LIGHT MODE (Override system preference) =====
-body:has(#theme-toggle:checked) {
-  --background-dark: #ffffff;
-  --background: #ffffff;
-  --background-brand: #fa4a6f;
-  --foreground: #171717;
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-100: rgba(0, 0, 0, 0.05);
-  --gray-alpha-200: rgba(0, 0, 0, 0.08);
-  --form-field-bg-color: #ffffff;
-  --form-field-border-color: #77787a;
-  --text-color: #000000;
-  --title-color: #333437;
-  --dashboard-card-fill-color: #ffffff;
-  --dashboard-filled-bg-color: #fafafb;
-  --dashboard-card-border-color: #f5f5f5;
-  --icons-color: #1a1a1a;
+// ===== SYSTEM PREFERENCE LIGHT MODE =====
+@media (prefers-color-scheme: light) {
+  :root {
+    @include light-theme;
+  }
+}
 
-  --gradient-background: linear-gradient(
-    180deg,
-    #ffffff 46.35%,
-    #fa4a6f 119.01%
-  );
+// ===== MANUAL THEME OVERRIDE (Dark Mode - Toggle Unchecked) =====
+body:has(#theme-toggle:not(:checked)) {
+  @include dark-theme;
+}
+
+// ===== MANUAL THEME OVERRIDE (Light Mode - Toggle Checked) =====
+body:has(#theme-toggle:checked) {
+  @include light-theme;
 }

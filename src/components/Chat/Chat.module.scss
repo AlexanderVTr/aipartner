@@ -106,6 +106,9 @@
   padding: 6px 16px;
   overflow-y: auto;
   field-sizing: content;
+  &::placeholder {
+    color: var(--input-placeholder-color);
+  }
 }
 
 .actions {

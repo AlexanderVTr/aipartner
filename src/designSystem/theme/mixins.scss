@@ -219,8 +219,8 @@
   }
 
   @include hover-only {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--liquid-glass-white-hover);
+    border-color: var(--liquid-glass-white-border-hover);
     box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.15),
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
@@ -233,15 +233,15 @@
 }
 
 @mixin liquid-glass-black {
-  background: rgb(85, 56, 74);
+  background: var(--liquid-glass-black);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(162, 161, 161, 0.1);
+  border: 1px solid var(--liquid-glass-black-border);
   transition: background $transition-base $transition-ease;
 
   @include hover-only {
-    background: rgb(106, 67, 91);
-    border-color: rgba(0, 0, 0, 0.15);
+    background: var(--liquid-glass-black-hover);
+    border-color: var(--liquid-glass-black-border-hover);
   }
 }
 

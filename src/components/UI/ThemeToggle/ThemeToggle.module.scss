@@ -33,11 +33,11 @@
 }
 
 .sunIcon {
-  opacity: 0;
+  opacity: 1;
 }
 
 .moonIcon {
-  opacity: 1;
+  opacity: 0;
 }
 
 // Theme switching logic is now managed in colors.global.scss
@@ -45,10 +45,10 @@
 // Toggle state changes
 .checkbox:checked + .label {
   .sunIcon {
-    opacity: 1;
+    opacity: 0;
   }
 
   .moonIcon {
-    opacity: 0;
+    opacity: 1;
   }
 }
