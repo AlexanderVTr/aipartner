@@ -12,9 +12,10 @@
   svg {
     cursor: pointer;
     transition: color 0.3s ease;
+    color: var(--icons-color);
 
     &:hover {
-      color: var(--gradient-start);
+      color: var(--icons-color-hover);
     }
   }
 }

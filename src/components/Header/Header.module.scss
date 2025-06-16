@@ -22,8 +22,21 @@
     }
 
     strong {
+      position: relative;
       font-size: 32px;
+      padding: 0 10px;
       @include gradient-text;
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--logo-bg-color);
+        z-index: -1;
+        border-radius: $border-radius-md;
+      }
     }
   }
 

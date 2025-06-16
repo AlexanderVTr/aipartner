@@ -6,7 +6,7 @@
   align-items: center;
   gap: 5px;
   font-size: $font-size-sm;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  color: var(--icons-color);
 
   .sparklesIcon {
     color: var(--gradient-start);
