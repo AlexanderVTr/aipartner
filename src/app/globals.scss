@@ -77,14 +77,6 @@ a {
   z-index: $z-index-default;
 }
 
-.footer {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: $z-index-header;
-}
-
 // Clerk overrides
 
 .cl-avatarBox {

@@ -5,7 +5,7 @@ export default function Header({ isVisible }: { isVisible: boolean }) {
   return (
     <header className={`${styles.header} ${isVisible ? styles.visible : ''}`}>
       <h1 className={styles.title}>
-        <span>Hi, I'm </span>
+        <span>Hi, I&apos;m </span>
         <strong>{CHAT_MESSAGES.UI_TITLE}</strong>
       </h1>
       <div className={styles.content}>

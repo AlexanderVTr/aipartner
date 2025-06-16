@@ -1,0 +1,27 @@
+@use '@/designSystem/theme/variables' as *;
+@use '@/designSystem/theme/mixins' as *;
+
+.footer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: $z-index-header;
+  padding: 0 16px;
+
+  svg {
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: var(--gradient-start);
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}

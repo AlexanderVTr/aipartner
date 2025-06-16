@@ -2,12 +2,5 @@
 @use '@/designSystem/theme/mixins' as *;
 
 .email {
-  display: inline-block;
-  margin: 0 16px 0 0;
-
-  &:hover {
-    svg {
-      color: var(--gradient-start);
-    }
-  }
+  display: flex;
 }

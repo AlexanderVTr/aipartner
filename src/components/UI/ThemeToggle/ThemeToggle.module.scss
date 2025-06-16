@@ -4,13 +4,6 @@
 .themeToggle {
   position: relative;
   display: inline-block;
-  margin-right: 10px;
-
-  &:hover {
-    svg {
-      color: var(--gradient-start);
-    }
-  }
 }
 
 .checkbox {
@@ -24,12 +17,12 @@
   cursor: pointer;
   position: relative;
   display: block;
-  height: 20px;
-  width: 20px;
-  min-height: 20px;
-  max-height: 20px;
-  min-width: 20px;
-  max-width: 20px;
+  height: 18px;
+  width: 18px;
+  min-height: 18px;
+  max-height: 18px;
+  min-width: 18px;
+  max-width: 18px;
 }
 
 .sunIcon,
@@ -57,13 +50,5 @@
 
   .moonIcon {
     opacity: 0;
-  }
-}
-
-// Mobile responsive
-@include mobile-only {
-  .label {
-    width: 36px;
-    height: 36px;
   }
 }
