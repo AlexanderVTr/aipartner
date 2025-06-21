@@ -1,0 +1,30 @@
+@use '@/designSystem/theme/variables' as *;
+@use '@/designSystem/theme/mixins' as *;
+
+.cl-avatarBox {
+  width: 24px;
+  height: 24px;
+}
+
+.cl-pricingTable-root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0;
+}
+
+.cl-pricingTable {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 400px;
+}
+
+.cl-pricingTableCardFooterButton {
+  @include gradient-primary;
+  color: var(--button-text-color);
+  border: none;
+  font-weight: $font-weight-semibold;
+  box-shadow: none !important;
+  min-height: 40px;
+}
