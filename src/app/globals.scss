@@ -2,6 +2,7 @@
 @use '@/designSystem/theme/reset' as *;
 @use '@/designSystem/theme/colors.global' as *;
 @use '@/designSystem/theme/resources' as *;
+@use '@/designSystem/theme/override_clerk' as *;
 
 html,
 body {
@@ -75,11 +76,4 @@ a {
   right: -169px;
   transform: rotate(21deg);
   z-index: $z-index-default;
-}
-
-// Clerk overrides
-
-.cl-avatarBox {
-  width: 24px;
-  height: 24px;
 }
