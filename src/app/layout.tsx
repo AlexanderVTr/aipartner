@@ -36,9 +36,9 @@ export default function RootLayout({
       <html lang='en'>
         <body
           className={`${roboto.variable} ${robotoFlex.variable} ${firaSans.variable}`}>
+          {children}
           <div className='shade'></div>
           <div className='shade2'></div>
-          {children}
         </body>
       </html>
     </ClerkProvider>

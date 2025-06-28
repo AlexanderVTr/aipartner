@@ -28,3 +28,7 @@
   box-shadow: none !important;
   min-height: 40px;
 }
+
+.cl-drawerRoot {
+  z-index: $z-index-modal;
+}
