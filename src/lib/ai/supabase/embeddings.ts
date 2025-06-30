@@ -1,5 +1,5 @@
 import { supabase } from './client'
-import { openai } from '@/lib/ai/callOpenAi'
+import { openai } from '@/lib/ai/client'
 
 export class EmbeddingService {
   // Create an embedding for text
