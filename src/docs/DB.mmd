@@ -1,0 +1,25 @@
+erDiagram
+    users {
+        uuid id PK
+        text clerk_user_id "ID from Clerk"
+        text email
+        number tokens_balance "0"
+        timestamp created_at
+    }
+
+    messages {
+        uuid id PK
+        uuid user_id FK "message owner"
+        text role "user or assistant"
+        text content "message text"
+        timestamp created_at
+    }
+
+    message_embeddings {
+        uuid message_id PK "references messages.id"
+        vector embedding "vector representation (1536)"
+        timestamp created_at
+    }
+
+    users ||--o{ messages : has
+    messages ||--|| message_embeddings : embeds

@@ -2,6 +2,7 @@
 
 import OpenAI from 'openai'
 import { SYSTEM_PROMPT } from './prompt'
+import { openai } from './client'
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
@@ -26,15 +27,6 @@ const chatMessages: ChatMessage[] = [
 
 export default async function callOpenAi(options: Options) {
   const { messages, reasoning } = options
-
-  const openai = new OpenAI({
-    baseURL: 'https://openrouter.ai/api/v1',
-    apiKey: process.env.OPENROUTER_API_KEY,
-    defaultHeaders: {
-      'HTTP-Referer': 'https://aigirls.ai',
-      'X-Title': 'AIGirls',
-    },
-  })
 
   // Add new messages to the chat history
   chatMessages.push(...messages)
