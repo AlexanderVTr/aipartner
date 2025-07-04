@@ -1,17 +1,14 @@
 import { ThemeToggle } from '@/components/UI'
-import Credits from '@/components/Credits/Credits'
+import Tokens from '@/components/Tokens/Tokens'
 import Email from '@/components/Email/Email'
 import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/nextjs'
 import { User } from 'lucide-react'
 import styles from './Footer.module.scss'
-import { currentUser } from '@clerk/nextjs/server'
 
-export default async function Footer() {
-  const user = await currentUser()
-  console.log('user', user)
+export default function Footer() {
   return (
     <footer className={styles.footer}>
-      <Credits user={user} />
+      <Tokens />
       <div className={styles.actions}>
         <Email />
         <ThemeToggle />

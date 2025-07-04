@@ -9,8 +9,11 @@ import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
 import { ChatMessage } from '@/lib/ai/callOpenAi'
 import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
+import { useRouter } from 'next/navigation'
+import { decrementTokens } from '@/lib/User/User.service'
 
-export default function Chat() {
+export default function Chat({ tokens }: { tokens: number }) {
+  const router = useRouter()
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -48,6 +51,11 @@ export default function Chat() {
   const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
     if (!input.trim() || isLoading) return
 
+    if (tokens === 0) {
+      router.push('/pricing')
+      return
+    }
+
     const userMessage = {
       role: CHAT_ROLES.USER,
       content: input.trim(),
@@ -61,6 +69,8 @@ export default function Chat() {
 
     try {
       const response = await callOpenAi({ messages: newMessages, reasoning })
+
+      await decrementTokens()
 
       setMessages((prev) => [
         ...prev,
