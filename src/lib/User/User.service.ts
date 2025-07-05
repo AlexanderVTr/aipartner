@@ -14,7 +14,6 @@ export async function getTokensFromDB() {
   // If user not logged in show tokens from local storage
   if (!user) {
     const tokens = TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
-    localStorage.setItem('tokens', tokens.toString())
     return tokens
   }
 
@@ -43,8 +42,6 @@ export async function getTokensFromDB() {
 export async function decrementTokens() {
   const user = await currentUser()
   if (!user) {
-    const tokens = localStorage.getItem('tokens')
-    localStorage.setItem('tokens', (Number(tokens) - 1).toString())
     return
   }
 

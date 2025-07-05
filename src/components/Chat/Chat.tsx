@@ -3,17 +3,19 @@
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useContext } from 'react'
 import styles from './Chat.module.scss'
 import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
 import { ChatMessage } from '@/lib/ai/callOpenAi'
 import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
-import { decrementTokens } from '@/lib/User/User.service'
+import { useTokens } from '@/contexts/TokensContext'
 
-export default function Chat({ tokens }: { tokens: number }) {
+export default function Chat() {
   const router = useRouter()
+  const { tokens, decrementTokens } = useTokens()
+
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
