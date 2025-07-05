@@ -39,23 +39,23 @@ export async function getTokensFromDB() {
   return data.tokens_balance
 }
 
-export async function decrementTokens() {
+export async function decrementTokensDB() {
   const user = await currentUser()
   if (!user) {
     return
   }
 
   const userId = user.id
-  const { data: userData } = await supabaseAdmin
+  const { data } = await supabaseAdmin
     .from('users')
     .select('tokens_balance')
     .eq('clerk_user_id', userId)
     .single()
 
-  if (userData) {
+  if (data) {
     const { error } = await supabaseAdmin
       .from('users')
-      .update({ tokens_balance: userData.tokens_balance - 1 })
+      .update({ tokens_balance: data.tokens_balance - 1 })
       .eq('clerk_user_id', userId)
 
     if (error) {

@@ -7,7 +7,7 @@ import {
   useState,
   useContext,
 } from 'react'
-import { decrementTokens, getTokensFromDB } from '@/lib/User/User.service'
+import { decrementTokensDB, getTokensFromDB } from '@/lib/User/User.service'
 
 interface TokensContextType {
   tokens: number
@@ -30,7 +30,7 @@ export function TokensProvider({ children }: { children: ReactNode }) {
 
   const handleDecrementTokens = async () => {
     try {
-      await decrementTokens()
+      await decrementTokensDB()
       //Optimistic update
       setTokens((prev) => prev - 1)
     } catch (error) {
