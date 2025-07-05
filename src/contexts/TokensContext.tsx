@@ -7,7 +7,7 @@ import {
   useState,
   useContext,
 } from 'react'
-import { decrementTokensDB, getTokensFromDB } from '@/lib/User/User.service'
+import { decrementTokensDB, getTokensFromDB } from '@/lib/Tokens/Tokens.service'
 
 interface TokensContextType {
   tokens: number
