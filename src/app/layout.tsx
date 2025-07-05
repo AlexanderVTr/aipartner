@@ -1,24 +1,18 @@
 import type { Metadata } from 'next'
-import { Fira_Sans, Roboto, Roboto_Flex } from 'next/font/google'
+import { Fira_Sans, Roboto_Flex } from 'next/font/google'
 import './globals.scss'
 import { ClerkProvider } from '@clerk/nextjs'
-
-const roboto = Roboto({
-  variable: '--font-roboto',
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '700'],
-})
 
 const robotoFlex = Roboto_Flex({
   variable: '--font-roboto-flex',
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '500'], // Только используемые weights
 })
 
 const firaSans = Fira_Sans({
   variable: '--font-fira-sans',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['600', '700'], // Только используемые weights
 })
 
 export const metadata: Metadata = {
@@ -34,8 +28,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang='en'>
-        <body
-          className={`${roboto.variable} ${robotoFlex.variable} ${firaSans.variable}`}>
+        <body className={`${robotoFlex.variable} ${firaSans.variable}`}>
           {children}
           <div className='shade'></div>
           <div className='shade2'></div>

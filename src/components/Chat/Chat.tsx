@@ -3,7 +3,7 @@
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
-import { useRef, useState, useEffect, useContext } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import styles from './Chat.module.scss'
 import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
 import { ChatMessage } from '@/lib/ai/callOpenAi'
