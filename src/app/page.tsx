@@ -1,12 +1,15 @@
 import { Container } from '@/components/UI'
 import Chat from '@/components/Chat/Chat'
 import Footer from '@/components/Footer/Footer'
+import { TokensProvider } from '@/contexts/TokensContext'
 
-export default function Home() {
+export default async function Home() {
   return (
     <Container>
-      <Chat />
-      <Footer />
+      <TokensProvider>
+        <Chat />
+        <Footer />
+      </TokensProvider>
     </Container>
   )
 }

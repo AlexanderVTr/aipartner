@@ -3,7 +3,7 @@
 
 .header {
   transition: opacity 0.3s ease-in-out;
-  padding: 0 20px;
+  padding: 2px 20px;
 
   p {
     display: none;
@@ -39,6 +39,10 @@
           $border-radius-lg;
       }
     }
+  }
+
+  &.alignCenter {
+    text-align: center;
   }
 
   &.visible {

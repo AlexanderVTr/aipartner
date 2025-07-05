@@ -1,0 +1,12 @@
+@use '@/designSystem/theme/variables' as *;
+@use '@/designSystem/theme/mixins' as *;
+
+.pricing {
+  text-align: center;
+  margin-top: 20px;
+  padding: 20px;
+
+  button {
+    text-decoration: underline;
+  }
+}

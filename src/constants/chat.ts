@@ -29,3 +29,9 @@ export const REASONING_MODES = {
   LOW: { effort: 'low' as const },
   HIGH: { effort: 'high' as const },
 } as const
+
+export const TOKENS_PER_PLAN = {
+  pro: 2999,
+  premium: 9990,
+  free: 100,
+} as const
