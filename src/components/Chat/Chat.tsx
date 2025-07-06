@@ -11,6 +11,7 @@ import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
+import { saveMessageToDB } from '@/lib/History/History.service'
 
 export default function Chat() {
   const router = useRouter()
@@ -70,7 +71,14 @@ export default function Chat() {
     setIsLoading(true)
 
     try {
+      //TODO: allSeateled here will be better
       const response = await callOpenAi({ messages: newMessages, reasoning })
+
+      await saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
+      await saveMessageToDB(
+        response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
+        CHAT_ROLES.ASSISTANT,
+      )
 
       await decrementTokens()
 
