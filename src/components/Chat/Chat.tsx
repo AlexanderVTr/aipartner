@@ -11,11 +11,16 @@ import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
-import { saveMessageToDB } from '@/lib/History/History.service'
+import {
+  findSimilarMessages,
+  saveMessageToDB,
+} from '@/lib/History/History.service'
+import { useUser } from '@clerk/nextjs'
 
 export default function Chat() {
   const router = useRouter()
   const { tokens, decrementTokens } = useTokens()
+  const { user } = useUser()
 
   const [input, setInput] = useState('')
   const [messages, setMessages] = useState<ChatMessage[]>([])
@@ -71,8 +76,28 @@ export default function Chat() {
     setIsLoading(true)
 
     try {
-      //TODO: allSeateled here will be better
-      const response = await callOpenAi({ messages: newMessages, reasoning })
+      //Preparing context for response
+      console.log('User ID:', user?.id)
+      console.log('Query:', userMessage.content)
+
+      const similarMessages =
+        user && (await findSimilarMessages(userMessage.content, user.id, 5))
+
+      console.log('Similar messages:', similarMessages)
+
+      const context =
+        similarMessages && similarMessages.length > 0
+          ? similarMessages
+              .map((msg: any) => `${msg.role}: ${msg.content}`)
+              .join('\n')
+          : undefined
+
+      console.log('Context', context)
+      const response = await callOpenAi({
+        messages: newMessages,
+        reasoning,
+        context,
+      })
 
       await saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
       await saveMessageToDB(

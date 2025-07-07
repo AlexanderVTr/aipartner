@@ -9,3 +9,13 @@ export const openai = new OpenAI({
     'X-Title': 'AIGirls',
   },
 })
+
+// OpenAI client with Embedding models
+export const openaiEmbedding = new OpenAI({
+  baseURL: 'https://api.openai.com/v1',
+  apiKey: process.env.OPENAI_API_KEY,
+  defaultHeaders: {
+    'HTTP-Referer': 'https://aigirls.ai',
+    'X-Title': 'AIGirls-Embedding',
+  },
+})

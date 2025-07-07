@@ -12,21 +12,27 @@ export interface ChatMessage {
 export interface Options {
   messages: ChatMessage[]
   reasoning?: { effort: 'low' | 'high' } // For enhanced reasoning
+  context?: string
 }
 
-const chatMessages: ChatMessage[] = [
-  {
-    role: 'system',
-    content: SYSTEM_PROMPT,
-  },
-  {
-    role: 'assistant',
-    content: "Hi, there! I'm Aisha, how are you today?",
-  },
-]
-
 export default async function callOpenAi(options: Options) {
-  const { messages, reasoning } = options
+  const { messages, reasoning, context } = options
+
+  const systemPrompt = context
+    ? `${SYSTEM_PROMPT}\n\nThe following is the context of the conversation: ${context}`
+    : SYSTEM_PROMPT
+
+  const chatMessages: ChatMessage[] = [
+    {
+      role: 'system',
+      content: systemPrompt,
+    },
+    {
+      role: 'assistant',
+      content: "Hi, there! I'm Aisha, how are you today?",
+    },
+    ...messages,
+  ]
 
   // Add new messages to the chat history
   chatMessages.push(...messages)
