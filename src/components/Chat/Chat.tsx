@@ -77,13 +77,8 @@ export default function Chat() {
 
     try {
       //Preparing context for response
-      console.log('User ID:', user?.id)
-      console.log('Query:', userMessage.content)
-
       const similarMessages =
         user && (await findSimilarMessages(userMessage.content, user.id, 5))
-
-      console.log('Similar messages:', similarMessages)
 
       const context =
         similarMessages && similarMessages.length > 0
@@ -92,7 +87,6 @@ export default function Chat() {
               .join('\n')
           : undefined
 
-      console.log('Context', context)
       const response = await callOpenAi({
         messages: newMessages,
         reasoning,
