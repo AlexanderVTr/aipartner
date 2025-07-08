@@ -98,8 +98,10 @@ export default function Chat() {
         context,
       })
 
-      await saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
-      await saveMessageToDB(
+      // not awaiting for the response to save the user message
+      // to avoid blocking the UI - FIRE AND FORGET
+      saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
+      saveMessageToDB(
         response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
         CHAT_ROLES.ASSISTANT,
       )
@@ -129,6 +131,7 @@ export default function Chat() {
 
   return (
     <div className={styles.chat}>
+    // TODO: add history for authenticated users
       <Header isVisible={messages.length === 0} />
       <div className={styles.messages_container} ref={messagesContainerRef}>
         {messages &&
