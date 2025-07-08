@@ -74,16 +74,19 @@ export async function findSimilarMessages(
   }
 }
 
-export async function getMessages() {
+export async function getMessages(page = 1, pageSize = 20) {
   const user = await currentUser()
-
   if (!user) return []
+
+  const from = (page - 1) * pageSize
+  const to = from + pageSize - 1
 
   const { data, error } = await supabaseAdmin
     .from('messages')
     .select('*')
-    .eq('clerk_user_id', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: true })
+    .range(from, to)
 
   if (error) {
     console.log('Error fetching messages', error)

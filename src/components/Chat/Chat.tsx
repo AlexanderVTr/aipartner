@@ -14,8 +14,10 @@ import { useTokens } from '@/contexts/TokensContext'
 import {
   findSimilarMessages,
   saveMessageToDB,
+  getMessages,
 } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 interface Message {
   role: string
@@ -31,6 +33,48 @@ export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showScrollButton, setShowScrollButton] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 20
+  // Load initial chat history
+  useEffect(() => {
+    const fetchInitialHistory = async () => {
+      if (!user) return
+      try {
+        const history = await getMessages(1, PAGE_SIZE)
+        if (history && Array.isArray(history)) {
+          setMessages(history)
+          setHasMore(history.length === PAGE_SIZE)
+        } else {
+          setHasMore(false)
+        }
+      } catch (e) {
+        setHasMore(false)
+        console.error('Failed to load chat history', e)
+      }
+    }
+    fetchInitialHistory()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
+  // Load more history for infinite scroll
+  const loadMoreMessages = async () => {
+    if (!user) return
+    const nextPage = page + 1
+    try {
+      const history = await getMessages(nextPage, PAGE_SIZE)
+      if (history && Array.isArray(history)) {
+        setMessages((prev) => [...history, ...prev]) // prepend older messages for chat
+        setPage(nextPage)
+        setHasMore(history.length === PAGE_SIZE)
+      } else {
+        setHasMore(false)
+      }
+    } catch (e) {
+      setHasMore(false)
+      console.error('Failed to load more chat history', e)
+    }
+  }
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   // Check scroll availability
@@ -129,23 +173,37 @@ export default function Chat() {
     }
   }
 
+  useEffect(() => {
+    console.log('Loaded messages:', messages)
+  }, [messages])
+
   return (
     <div className={styles.chat}>
-    // TODO: add history for authenticated users
       <Header isVisible={messages.length === 0} />
-      <div className={styles.messages_container} ref={messagesContainerRef}>
-        {messages &&
-          messages.map((message, index) => (
+      <InfiniteScroll
+        dataLength={messages.length}
+        next={loadMoreMessages}
+        hasMore={hasMore}
+        inverse={true}
+        loader={<div className={styles.typing}>{CHAT_MESSAGES.UI_TYPING}</div>}
+        scrollableTarget="messagesContainer"
+        style={{ overflow: 'unset', display: 'block' }}
+      >
+        <div
+          id="messagesContainer"
+          className={styles.messages_container}
+          ref={messagesContainerRef}
+          style={{ height: '60vh', overflowY: 'auto', display: 'flex', flexDirection: 'column' }} // Remove column-reverse for normal scroll
+        >
+          {messages.map((message, index) => (
             <div
               key={index}
               className={`${message.role === CHAT_ROLES.USER ? styles.user : ''}`}>
               {message.content}
             </div>
           ))}
-        {isLoading && (
-          <div className={styles.typing}>{CHAT_MESSAGES.UI_TYPING}</div>
-        )}
-      </div>
+        </div>
+      </InfiniteScroll>
       <div className={styles.input}>
         <textarea
           onChange={(e) => setInput(e.target.value)}
