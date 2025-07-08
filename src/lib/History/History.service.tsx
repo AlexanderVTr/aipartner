@@ -42,7 +42,7 @@ export async function saveMessageToDB(message: string, role: string) {
   if (messageError) console.error('embeddedError', embeddedError)
 }
 
-// function found similar request in the vector DB
+// function found similar sentences in the vector DB
 export async function findSimilarMessages(
   query: string,
   userId: string,
@@ -72,4 +72,23 @@ export async function findSimilarMessages(
     console.error('Error in findSimilarMessages:', error)
     return []
   }
+}
+
+export async function getMessages() {
+  const user = await currentUser()
+
+  if (!user) return []
+
+  const { data, error } = await supabaseAdmin
+    .from('messages')
+    .select('*')
+    .eq('clerk_user_id', user.id)
+    .order('created_at', { ascending: true })
+
+  if (error) {
+    console.log('Error fetching messages', error)
+    return []
+  }
+
+  return data || []
 }

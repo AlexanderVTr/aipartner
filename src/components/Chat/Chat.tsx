@@ -17,6 +17,11 @@ import {
 } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 
+interface Message {
+  role: string
+  content: string
+}
+
 export default function Chat() {
   const router = useRouter()
   const { tokens, decrementTokens } = useTokens()
@@ -83,7 +88,7 @@ export default function Chat() {
       const context =
         similarMessages && similarMessages.length > 0
           ? similarMessages
-              .map((msg: any) => `${msg.role}: ${msg.content}`)
+              .map((msg: Message) => `${msg.role}: ${msg.content}`)
               .join('\n')
           : undefined
 
