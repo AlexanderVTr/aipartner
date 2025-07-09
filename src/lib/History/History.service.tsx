@@ -82,7 +82,7 @@ export async function getMessages() {
   const { data, error } = await supabaseAdmin
     .from('messages')
     .select('*')
-    .eq('clerk_user_id', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: true })
 
   if (error) {
@@ -91,4 +91,58 @@ export async function getMessages() {
   }
 
   return data || []
+}
+
+// New function for paginated messages (for infinite scroll)
+export async function getMessagesPaginated(
+  limit: number = 20,
+  offset: number = 0,
+) {
+  const user = await currentUser()
+
+  if (!user) return { messages: [], hasMore: false }
+
+  const { data, error } = await supabaseAdmin
+    .from('messages')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false }) // Most recent first for pagination
+    .range(offset, offset + limit - 1)
+
+  if (error) {
+    console.log('Error fetching paginated messages', error)
+    return { messages: [], hasMore: false }
+  }
+
+  // Check if there are more messages
+  const { count } = await supabaseAdmin
+    .from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  const hasMore = count ? offset + limit < count : false
+
+  return {
+    messages: data ? data.reverse() : [], // Reverse to show oldest first in UI
+    hasMore,
+  }
+}
+
+// Function to get the total count of messages for a user
+export async function getMessagesCount() {
+  const user = await currentUser()
+
+  if (!user) return 0
+
+  const { count, error } = await supabaseAdmin
+    .from('messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.log('Error fetching messages count', error)
+    return 0
+  }
+
+  return count || 0
 }

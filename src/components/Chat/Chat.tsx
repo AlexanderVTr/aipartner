@@ -3,12 +3,19 @@
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
 import styles from './Chat.module.scss'
 import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
-import { ChatMessage } from '@/lib/ai/callOpenAi'
-import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
+import {
+  handleKeyDown,
+  groupMessagesByDate,
+  createMessage,
+  scrollToBottom,
+} from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
+import { CHAT_CONFIG } from './constants'
+import { useMessageHistory, useScrollButton, useInfiniteScroll } from './hooks'
+import MessageGroup from './MessageGroup'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
 import {
@@ -26,122 +33,183 @@ export default function Chat() {
   const router = useRouter()
   const { tokens, decrementTokens } = useTokens()
   const { user } = useUser()
-
-  const [input, setInput] = useState('')
-  const [messages, setMessages] = useState<ChatMessage[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [showScrollButton, setShowScrollButton] = useState(false)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
-  // Check scroll availability
-  const checkScrollAvailability = () => {
-    setShowScrollButton(canScrollDown(messagesContainerRef))
-  }
+  // State
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
 
-  // Scroll to bottom when messages change or loading state changes
+  // Custom hooks
+  const {
+    messages,
+    isLoadingHistory,
+    isLoadingMore,
+    hasMoreHistory,
+    loadInitialHistory,
+    loadMoreMessages,
+    addMessage,
+  } = useMessageHistory()
+
+  const { showScrollButton, updateScrollButton } =
+    useScrollButton(messagesContainerRef)
+
+  // Memoized message groups
+  const messageGroups = useMemo(() => groupMessagesByDate(messages), [messages])
+
+  // Auto-scroll to bottom with delay
+  const autoScrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      scrollToBottom(messagesContainerRef)
+    }, CHAT_CONFIG.SCROLL_DELAY)
+  }, [])
+
+  // Load initial history on mount
   useEffect(() => {
-    scrollToBottom(messagesContainerRef)
-  }, [messages, isLoading])
+    const initializeHistory = async () => {
+      const formattedMessages = await loadInitialHistory()
+      // Auto-scroll to bottom after loading history
+      if (formattedMessages && formattedMessages.length > 0) {
+        autoScrollToBottom()
+      }
+    }
 
-  // Check scroll availability when messages change
-  useEffect(() => {
-    checkScrollAvailability()
-  }, [messages, isLoading])
+    initializeHistory()
+  }, [loadInitialHistory, autoScrollToBottom])
 
-  // Add scroll event listener to track scroll position
+  // Handle infinite scroll
+  const handleLoadMore = useCallback(() => {
+    loadMoreMessages()
+  }, [loadMoreMessages])
+
+  useInfiniteScroll(
+    messagesContainerRef,
+    hasMoreHistory,
+    isLoadingMore,
+    handleLoadMore,
+  )
+
+  // Update scroll button visibility on scroll
   useEffect(() => {
     const container = messagesContainerRef.current
     if (!container) return
 
     const handleScroll = () => {
-      checkScrollAvailability()
+      updateScrollButton()
     }
 
-    container.addEventListener('scroll', handleScroll)
+    container.addEventListener('scroll', handleScroll, { passive: true })
     return () => container.removeEventListener('scroll', handleScroll)
+  }, [updateScrollButton])
+
+  // Update scroll button when loading states change
+  useEffect(() => {
+    updateScrollButton()
+  }, [isLoading, isLoadingHistory, isLoadingMore, updateScrollButton])
+
+  const handleSendMessage = useCallback(
+    async (reasoning?: { effort: 'low' | 'high' }) => {
+      if (!input.trim() || isLoading) return
+
+      if (tokens === 0) {
+        router.push('/pricing')
+        return
+      }
+
+      const userMessage = createMessage(CHAT_ROLES.USER, input.trim())
+
+      // Add user message and auto-scroll
+      addMessage(userMessage)
+      setInput('')
+      autoScrollToBottom()
+
+      setIsLoading(true)
+
+      try {
+        // Preparing context for response
+        const similarMessages =
+          user && (await findSimilarMessages(userMessage.content, user.id, 5))
+
+        const context =
+          similarMessages && similarMessages.length > 0
+            ? similarMessages
+                .map((msg: Message) => `${msg.role}: ${msg.content}`)
+                .join('\n')
+            : undefined
+
+        const response = await callOpenAi({
+          messages: [...messages, userMessage],
+          reasoning,
+          context,
+        })
+
+        // Save messages to DB (fire and forget)
+        saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
+        saveMessageToDB(
+          response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
+          CHAT_ROLES.ASSISTANT,
+        )
+
+        await decrementTokens()
+
+        const assistantMessage = createMessage(
+          CHAT_ROLES.ASSISTANT,
+          response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
+        )
+
+        // Add assistant message and auto-scroll
+        addMessage(assistantMessage)
+        autoScrollToBottom()
+      } catch (error) {
+        console.error(error)
+        const errorMessage = createMessage(
+          CHAT_ROLES.ASSISTANT,
+          CHAT_MESSAGES.ERROR_NO_RESPONSE,
+        )
+
+        // Add error message and auto-scroll
+        addMessage(errorMessage)
+        autoScrollToBottom()
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [
+      input,
+      isLoading,
+      tokens,
+      router,
+      user,
+      messages,
+      addMessage,
+      autoScrollToBottom,
+      decrementTokens,
+    ],
+  )
+
+  const handleScrollToBottom = useCallback(() => {
+    scrollToBottom(messagesContainerRef)
   }, [])
-
-  const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
-    if (!input.trim() || isLoading) return
-
-    if (tokens === 0) {
-      router.push('/pricing')
-      return
-    }
-
-    const userMessage = {
-      role: CHAT_ROLES.USER,
-      content: input.trim(),
-    }
-
-    const newMessages = [...messages, userMessage] as ChatMessage[]
-    setMessages(newMessages)
-
-    setInput('')
-    setIsLoading(true)
-
-    try {
-      //Preparing context for response
-      const similarMessages =
-        user && (await findSimilarMessages(userMessage.content, user.id, 5))
-
-      const context =
-        similarMessages && similarMessages.length > 0
-          ? similarMessages
-              .map((msg: Message) => `${msg.role}: ${msg.content}`)
-              .join('\n')
-          : undefined
-
-      const response = await callOpenAi({
-        messages: newMessages,
-        reasoning,
-        context,
-      })
-
-      // not awaiting for the response to save the user message
-      // to avoid blocking the UI - FIRE AND FORGET
-      saveMessageToDB(userMessage.content, CHAT_ROLES.USER)
-      saveMessageToDB(
-        response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
-        CHAT_ROLES.ASSISTANT,
-      )
-
-      await decrementTokens()
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: CHAT_ROLES.ASSISTANT,
-          content: response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
-        },
-      ])
-    } catch (error) {
-      console.error(error)
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: CHAT_ROLES.ASSISTANT,
-          content: CHAT_MESSAGES.ERROR_NO_RESPONSE,
-        },
-      ])
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <div className={styles.chat}>
-    // TODO: add history for authenticated users
-      <Header isVisible={messages.length === 0} />
+      <Header isVisible={messages.length === 0 && !isLoadingHistory} />
       <div className={styles.messages_container} ref={messagesContainerRef}>
-        {messages &&
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`${message.role === CHAT_ROLES.USER ? styles.user : ''}`}>
-              {message.content}
-            </div>
-          ))}
+        {isLoadingMore && (
+          <div className={styles.loading_more}>Loading more messages...</div>
+        )}
+        {isLoadingHistory && (
+          <div className={styles.loading_history}>
+            Loading message history...
+          </div>
+        )}
+        {messageGroups.map((group) => (
+          <MessageGroup
+            key={group.date}
+            date={group.date}
+            dateLabel={group.dateLabel}
+            messages={group.messages}
+          />
+        ))}
         {isLoading && (
           <div className={styles.typing}>{CHAT_MESSAGES.UI_TYPING}</div>
         )}
@@ -163,9 +231,7 @@ export default function Chat() {
           </Button>
         </div>
         {showScrollButton && (
-          <div
-            className={styles.arrow_down}
-            onClick={() => scrollToBottom(messagesContainerRef)}>
+          <div className={styles.arrow_down} onClick={handleScrollToBottom}>
             <ArrowDown size={18} />
           </div>
         )}
