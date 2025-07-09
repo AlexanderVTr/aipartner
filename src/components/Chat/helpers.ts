@@ -15,12 +15,6 @@ export interface DatabaseMessage {
   created_at: string
 }
 
-export interface MessageGroup {
-  date: string
-  dateLabel: string
-  messages: ExtendedChatMessage[]
-}
-
 // Simple scroll functions
 export const scrollToBottom = (
   containerRef: RefObject<HTMLDivElement | null>,
@@ -55,25 +49,6 @@ export const handleKeyDown = (
   }
 }
 
-// Generate a unique key for a message
-export const generateMessageKey = (
-  message: ExtendedChatMessage,
-  index: number,
-): string => {
-  if (message.id) {
-    return message.id
-  }
-  // For messages without database ID, create a simple hash without btoa
-  const text = message.content + message.role
-  let hash = 0
-  for (let i = 0; i < text.length; i++) {
-    const char = text.charCodeAt(i)
-    hash = (hash << 5) - hash + char
-    hash = hash & hash // Convert to 32-bit integer
-  }
-  return `${index}-${message.role}-${Math.abs(hash).toString(36)}`
-}
-
 // Format date for display
 export const formatDateLabel = (date: Date): string => {
   const today = new Date()
@@ -98,34 +73,21 @@ export const formatDateLabel = (date: Date): string => {
   })
 }
 
-// Group messages by date
-export const groupMessagesByDate = (
-  messages: ExtendedChatMessage[],
-): MessageGroup[] => {
-  const groups: { [key: string]: MessageGroup } = {}
+// Check if two messages are from different days
+export const shouldShowDateSeparator = (
+  currentMessage: ExtendedChatMessage,
+  previousMessage?: ExtendedChatMessage,
+): boolean => {
+  if (!previousMessage) return true // Show separator for first message
 
-  messages.forEach((message) => {
-    const messageDate = message.timestamp
-      ? new Date(message.timestamp)
-      : new Date() // For new messages without timestamp
+  const currentDate = currentMessage.timestamp
+    ? new Date(currentMessage.timestamp)
+    : new Date()
+  const previousDate = previousMessage.timestamp
+    ? new Date(previousMessage.timestamp)
+    : new Date()
 
-    const dateKey = messageDate.toDateString()
-
-    if (!groups[dateKey]) {
-      groups[dateKey] = {
-        date: dateKey,
-        dateLabel: formatDateLabel(messageDate),
-        messages: [],
-      }
-    }
-
-    groups[dateKey].messages.push(message)
-  })
-
-  // Sort groups by date (oldest first)
-  return Object.values(groups).sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  )
+  return currentDate.toDateString() !== previousDate.toDateString()
 }
 
 // Convert database messages to ExtendedChatMessage format

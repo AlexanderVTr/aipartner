@@ -23,14 +23,19 @@
   scroll-behavior: smooth;
 }
 
-.input {
-  position: relative;
-  background: var(--form-field-bg-color);
-  border: 1px solid var(--form-field-border-color);
-  border-radius: $border-radius-xl;
-  padding: 10px 0;
-  margin: 10px 0 4px 0;
-  min-height: 110px;
+.message {
+  width: fit-content;
+  max-width: 80%;
+  margin: 16px 0;
+  transform-origin: bottom right;
+  animation: messageAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+  transform: scale(0.3);
+}
+
+.message_content {
+  display: flex;
+  flex-direction: column;
   width: 100%;
 }
 
@@ -40,14 +45,38 @@
   border-radius: $border-radius-xl $border-radius-sm $border-radius-xl
     $border-radius-xl;
   padding: 10px 16px;
-  margin: 16px 0;
-  align-self: flex-end;
-  width: fit-content;
-  max-width: 80%;
-  transform-origin: bottom right;
-  animation: messageAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  opacity: 0;
-  transform: scale(0.3);
+  align-self: flex-end; // User messages on the right
+}
+
+.assistant {
+  align-self: flex-start; // Assistant messages on the left
+}
+
+.date_separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0 16px 0;
+  width: 100%;
+  color: var(--text-secondary-color);
+  font-size: $font-size-sm;
+  font-weight: 500;
+  padding: 0 12px;
+  background: var(--background-color);
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--form-field-border-color);
+    opacity: 0.2;
+    z-index: -1;
+  }
 }
 
 @keyframes messageAppear {
@@ -59,6 +88,17 @@
     opacity: 1;
     transform: scale(1) translateY(0);
   }
+}
+
+.input {
+  position: relative;
+  background: var(--form-field-bg-color);
+  border: 1px solid var(--form-field-border-color);
+  border-radius: $border-radius-xl;
+  padding: 10px 0;
+  margin: 10px 0 4px 0;
+  min-height: 110px;
+  width: 100%;
 }
 
 .typing {
@@ -159,39 +199,4 @@
   color: var(--text-secondary-color);
   font-size: $font-size-sm;
   opacity: 0.8;
-}
-
-.date_separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 24px 0 16px 0;
-  position: relative;
-  width: 100%;
-  // Text styling
-  color: var(--text-secondary-color);
-  font-size: $font-size-sm;
-  font-weight: 500;
-  padding: 0 12px;
-  position: relative;
-  z-index: 1;
-
-  &::before {
-    content: '';
-    z-index: -1;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--form-field-border-color);
-    opacity: 0.2;
-  }
-}
-
-.message_group {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
 }

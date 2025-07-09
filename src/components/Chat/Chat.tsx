@@ -3,19 +3,19 @@
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
-import { useRef, useState, useEffect, useCallback, useMemo } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import styles from './Chat.module.scss'
 import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
 import {
   handleKeyDown,
-  groupMessagesByDate,
   createMessage,
   scrollToBottom,
+  formatDateLabel,
+  shouldShowDateSeparator,
 } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
 import { CHAT_CONFIG } from './constants'
 import { useMessageHistory, useScrollButton, useInfiniteScroll } from './hooks'
-import MessageGroup from './MessageGroup'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
 import {
@@ -52,9 +52,6 @@ export default function Chat() {
 
   const { showScrollButton, updateScrollButton } =
     useScrollButton(messagesContainerRef)
-
-  // Memoized message groups
-  const messageGroups = useMemo(() => groupMessagesByDate(messages), [messages])
 
   // Auto-scroll to bottom with delay
   const autoScrollToBottom = useCallback(() => {
@@ -202,14 +199,34 @@ export default function Chat() {
             Loading message history...
           </div>
         )}
-        {messageGroups.map((group) => (
-          <MessageGroup
-            key={group.date}
-            date={group.date}
-            dateLabel={group.dateLabel}
-            messages={group.messages}
-          />
-        ))}
+        {messages.map((message, index) => {
+          const previousMessage = index > 0 ? messages[index - 1] : undefined
+          const showDateSeparator = shouldShowDateSeparator(
+            message,
+            previousMessage,
+          )
+          const messageDate = message.timestamp
+            ? new Date(message.timestamp)
+            : new Date()
+
+          return (
+            <div
+              className={styles.message_content}
+              key={message.id || `${index}-${message.role}`}>
+              {showDateSeparator && (
+                <div className={styles.date_separator}>
+                  {formatDateLabel(messageDate)}
+                </div>
+              )}
+              <div
+                className={`${styles.message} ${
+                  message.role === 'user' ? styles.user : styles.assistant
+                }`}>
+                {message.content}
+              </div>
+            </div>
+          )
+        })}
         {isLoading && (
           <div className={styles.typing}>{CHAT_MESSAGES.UI_TYPING}</div>
         )}
