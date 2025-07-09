@@ -7,6 +7,7 @@ import { openai } from './client'
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system'
   content: string
+  created_at?: string
 }
 
 export interface Options {

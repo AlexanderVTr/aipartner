@@ -74,21 +74,27 @@ export async function findSimilarMessages(
   }
 }
 
-export async function getMessages() {
+export async function getMessages(limit: number, beforeTimestamp?: string) {
   const user = await currentUser()
 
   if (!user) return []
 
-  const { data, error } = await supabaseAdmin
+  let query = supabaseAdmin
     .from('messages')
     .select('*')
-    .eq('clerk_user_id', user.id)
-    .order('created_at', { ascending: true })
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(limit)
 
+  if (beforeTimestamp) {
+    query = query.lt('created_at', beforeTimestamp)
+  }
+
+  const { data, error } = await query
   if (error) {
     console.log('Error fetching messages', error)
     return []
   }
 
-  return data || []
+  return data.reverse() || []
 }

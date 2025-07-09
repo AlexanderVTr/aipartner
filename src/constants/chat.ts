@@ -35,3 +35,5 @@ export const TOKENS_PER_PLAN = {
   premium: 9990,
   free: 100,
 } as const
+
+export const PER_PAGE = 20

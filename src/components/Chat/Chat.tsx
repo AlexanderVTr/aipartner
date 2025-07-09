@@ -5,14 +5,21 @@ import { Button } from '@/components/UI'
 import callOpenAi from '@/lib/ai/callOpenAi'
 import { useRef, useState, useEffect } from 'react'
 import styles from './Chat.module.scss'
-import { ArrowUpFromDot, ArrowDown } from 'lucide-react'
+import { ArrowUpFromDot, ArrowDown, ArrowUp } from 'lucide-react'
 import { ChatMessage } from '@/lib/ai/callOpenAi'
-import { scrollToBottom, handleKeyDown, canScrollDown } from './helpers'
-import { CHAT_MESSAGES, CHAT_ROLES } from '@/constants/chat'
+import {
+  scrollToBottom,
+  handleKeyDown,
+  canScrollDown,
+  formatMessageDate,
+  shouldShowDateDivider,
+} from './helpers'
+import { CHAT_MESSAGES, CHAT_ROLES, PER_PAGE } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
 import {
   findSimilarMessages,
+  getMessages,
   saveMessageToDB,
 } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
@@ -31,6 +38,8 @@ export default function Chat() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [showScrollButton, setShowScrollButton] = useState(false)
+  const [hasMoreMessages, setHasMoreMessages] = useState(true)
+  const [oldMessageTimestamp, setOldMessageTimestamp] = useState('')
   const messagesContainerRef = useRef<HTMLDivElement>(null)
 
   // Check scroll availability
@@ -38,10 +47,10 @@ export default function Chat() {
     setShowScrollButton(canScrollDown(messagesContainerRef))
   }
 
-  // Scroll to bottom when messages change or loading state changes
+  // Scroll to bottom when loading state changes
   useEffect(() => {
     scrollToBottom(messagesContainerRef)
-  }, [messages, isLoading])
+  }, [isLoading])
 
   // Check scroll availability when messages change
   useEffect(() => {
@@ -61,6 +70,30 @@ export default function Chat() {
     return () => container.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Helper function to handle messages loading
+  const handleMessagesLoaded = (
+    newMessages: ChatMessage[],
+    shouldPrepend = false,
+  ) => {
+    if (newMessages.length === 0) {
+      setHasMoreMessages(false)
+      return
+    }
+
+    if (shouldPrepend) {
+      setMessages((prev) => [...newMessages, ...prev])
+    } else {
+      setMessages(newMessages)
+    }
+
+    setOldMessageTimestamp(newMessages[0].created_at || '')
+
+    if (newMessages.length < PER_PAGE) {
+      setHasMoreMessages(false)
+    }
+  }
+
+  // SEND MESSAGE FUNCTION
   const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
     if (!input.trim() || isLoading) return
 
@@ -129,19 +162,71 @@ export default function Chat() {
     }
   }
 
+  // INITIAL CHAT MESSAGES
+  useEffect(() => {
+    const loadInitialMessages = async () => {
+      if (!user?.id) return
+
+      try {
+        const recentMessages = await getMessages(PER_PAGE)
+        handleMessagesLoaded(recentMessages)
+      } catch (error) {
+        console.error('Error loading initial messages', error)
+        setHasMoreMessages(false)
+      }
+    }
+
+    loadInitialMessages()
+    setTimeout(() => {
+      scrollToBottom(messagesContainerRef)
+    }, 2000)
+  }, [user])
+
+  // LOAD MORE MESSAGES
+  const handleLoadMore = async () => {
+    try {
+      const oldMessages = await getMessages(PER_PAGE, oldMessageTimestamp)
+      handleMessagesLoaded(oldMessages, true)
+    } catch (error) {
+      console.error('Error fetching history', error)
+      setHasMoreMessages(false)
+    }
+  }
+
   return (
     <div className={styles.chat}>
-    // TODO: add history for authenticated users
       <Header isVisible={messages.length === 0} />
       <div className={styles.messages_container} ref={messagesContainerRef}>
+        {hasMoreMessages && user?.id && (
+          <div className={styles.arrow_up} onClick={handleLoadMore}>
+            Load history <ArrowUp size={18} />
+          </div>
+        )}
         {messages &&
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`${message.role === CHAT_ROLES.USER ? styles.user : ''}`}>
-              {message.content}
-            </div>
-          ))}
+          messages.map((message, index) => {
+            const previousMessage = messages[index - 1]
+            const showDateDivider = shouldShowDateDivider(
+              message,
+              previousMessage,
+            )
+
+            return (
+              <div key={index} className={styles.messages_box}>
+                {showDateDivider && (
+                  <div className={styles.date_divider}>
+                    {formatMessageDate(
+                      message.created_at || new Date().toISOString(),
+                    )}
+                  </div>
+                )}
+                <div
+                  className={`${message.role === CHAT_ROLES.USER ? styles.user : ''}`}>
+                  {message.content}
+                </div>
+              </div>
+            )
+          })}
+
         {isLoading && (
           <div className={styles.typing}>{CHAT_MESSAGES.UI_TYPING}</div>
         )}
