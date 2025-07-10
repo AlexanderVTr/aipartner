@@ -11,7 +11,6 @@ import {
   scrollToBottom,
   handleKeyDown,
   canScrollDown,
-  formatMessageDate,
   shouldShowDateDivider,
 } from './helpers'
 import { CHAT_MESSAGES, CHAT_ROLES, PER_PAGE } from '@/constants/chat'
@@ -23,6 +22,7 @@ import {
   saveMessageToDB,
 } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
+import DateDivider from '@/components/UI/DateDivider/DateDivider'
 
 interface Message {
   role: string
@@ -213,11 +213,9 @@ export default function Chat() {
             return (
               <div key={index} className={styles.messages_box}>
                 {showDateDivider && (
-                  <div className={styles.date_divider}>
-                    {formatMessageDate(
-                      message.created_at || new Date().toISOString(),
-                    )}
-                  </div>
+                  <DateDivider>
+                    {message.created_at || new Date().toISOString()}
+                  </DateDivider>
                 )}
                 <div
                   className={`${message.role === CHAT_ROLES.USER ? styles.user : ''}`}>
