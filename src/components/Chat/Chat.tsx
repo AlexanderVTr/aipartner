@@ -165,7 +165,11 @@ export default function Chat() {
   // INITIAL CHAT MESSAGES
   useEffect(() => {
     const loadInitialMessages = async () => {
-      if (!user?.id) return
+      if (!user?.id) {
+        //Clean chat on log out
+        setMessages([])
+        return
+      }
 
       try {
         const recentMessages = await getMessages(PER_PAGE)
