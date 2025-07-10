@@ -39,10 +39,7 @@ export const shouldShowDateDivider = (
   currentMessage: ChatMessage,
   previousMessage: ChatMessage,
 ) => {
-  if (!previousMessage) return true
-
   const currentDate = new Date(currentMessage.created_at || '').toDateString()
-  const previousDate = new Date(previousMessage.created_at || '').toDateString()
   const today = new Date().toDateString()
 
   // Skip today's messages
@@ -50,5 +47,8 @@ export const shouldShowDateDivider = (
     return false
   }
 
+  if (!previousMessage) return true
+
+  const previousDate = new Date(previousMessage.created_at || '').toDateString()
   return currentDate !== previousDate
 }
