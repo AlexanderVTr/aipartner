@@ -39,7 +39,12 @@ export const shouldShowDateDivider = (
   currentMessage: ChatMessage,
   previousMessage: ChatMessage,
 ) => {
-  const currentDate = new Date(currentMessage.created_at || '').toDateString()
+  // If no created_at, assume it's today (new messages)
+  if (!currentMessage.created_at) {
+    return false
+  }
+
+  const currentDate = new Date(currentMessage.created_at).toDateString()
   const today = new Date().toDateString()
 
   // Skip today's messages

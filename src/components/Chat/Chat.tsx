@@ -105,6 +105,7 @@ export default function Chat() {
     const userMessage = {
       role: CHAT_ROLES.USER,
       content: input.trim(),
+      created_at: new Date().toISOString(),
     }
 
     const newMessages = [...messages, userMessage] as ChatMessage[]
@@ -146,6 +147,7 @@ export default function Chat() {
         {
           role: CHAT_ROLES.ASSISTANT,
           content: response || CHAT_MESSAGES.ERROR_NO_RESPONSE,
+          created_at: new Date().toISOString(),
         },
       ])
     } catch (error) {
@@ -155,6 +157,7 @@ export default function Chat() {
         {
           role: CHAT_ROLES.ASSISTANT,
           content: CHAT_MESSAGES.ERROR_NO_RESPONSE,
+          created_at: new Date().toISOString(),
         },
       ])
     } finally {
