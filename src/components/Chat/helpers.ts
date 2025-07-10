@@ -43,6 +43,10 @@ export const shouldShowDateDivider = (
 
   const currentDate = new Date(currentMessage.created_at || '').toDateString()
   const previousDate = new Date(previousMessage.created_at || '').toDateString()
-
+  const today = new Date()
+  // Skip today's messages
+  if (currentDate.toString() === today.toDateString()) {
+    return false
+  }
   return currentDate !== previousDate
 }
