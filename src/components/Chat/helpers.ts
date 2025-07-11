@@ -39,7 +39,7 @@ export const shouldShowDateDivider = (
   currentMessage: ChatMessage,
   previousMessage: ChatMessage,
 ) => {
-  // If no created_at, assume it's today (new messages)
+  // If no created_at, it's a new message - don't show divider
   if (!currentMessage.created_at) {
     return false
   }
@@ -47,13 +47,22 @@ export const shouldShowDateDivider = (
   const currentDate = new Date(currentMessage.created_at).toDateString()
   const today = new Date().toDateString()
 
-  // Skip today's messages
+  // Never show divider for today's messages
   if (currentDate === today) {
     return false
   }
 
-  if (!previousMessage) return true
+  // For first message that's not today - show divider
+  if (!previousMessage) {
+    return true
+  }
 
-  const previousDate = new Date(previousMessage.created_at || '').toDateString()
+  // If previous message has no created_at, it's today - show divider for non-today message
+  if (!previousMessage.created_at) {
+    return true
+  }
+
+  // Both messages have dates - show divider if dates are different
+  const previousDate = new Date(previousMessage.created_at).toDateString()
   return currentDate !== previousDate
 }
