@@ -1,0 +1,32 @@
+graph TD
+    A["User Changes Plan in Clerk"] --> B["Clerk Sends Webhook"]
+    B --> C["Webhook Validates Secret"]
+    C --> D{"Valid Request?"}
+    D -->|No| E["Return 401 Error"]
+    D -->|Yes| F["Parse JSON Data"]
+    F --> G["Determine New Plan"]
+    G --> H["Free Plan<br/>100 tokens"]
+    G --> I["Pro Plan<br/>2999 tokens"]
+    G --> J["Premium Plan<br/>9990 tokens"]
+    H --> K["Reset Tokens in Database"]
+    I --> K
+    J --> K
+    K --> L["Update User Record"]
+    L --> M["Log Success"]
+    M --> N["Return 200 OK"]
+    
+    O["User Opens Chat"] --> P["TokensContext Loads"]
+    P --> Q["Get Current Tokens"]
+    Q --> R["Display Token Count"]
+    
+    S["User Sends Message"] --> T["Check Token Count"]
+    T --> U{"Tokens > 0?"}
+    U -->|No| V["Redirect to Pricing"]
+    U -->|Yes| W["Send Message to AI"]
+    W --> X["Decrement Token Count"]
+    X --> Y["Update UI"]
+    
+    style A fill:#e1f5fe
+    style K fill:#f3e5f5
+    style R fill:#e8f5e8
+    style X fill:#fff3e0

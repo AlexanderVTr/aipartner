@@ -1,0 +1,87 @@
+# Cursor AI Rules for High-Quality Code
+
+## 🎯 MANDATORY ANALYSIS BEFORE CODING
+
+1. **Study existing architecture** - understand how the system currently works
+2. **Define minimal solution** - identify exactly what needs to change
+3. **Check dependencies** - verify what's already available in the project
+4. **Find existing patterns** - reuse established approaches in codebase
+
+## ❌ FORBIDDEN ACTIONS
+
+- **No "just in case" functions** - only create what will be used
+- **No new patterns** - follow existing project conventions
+- **No rewriting working code** - unless explicitly required
+- **No new dependencies** - without user approval
+- **No complex abstractions** - for simple problems
+
+## ✅ MANDATORY CHECKS
+
+Before suggesting any code:
+
+- [ ] Where is this function called? (if nowhere, don't create)
+- [ ] Is there similar code? (reuse the pattern)
+- [ ] Can it be simpler? (choose the simplest solution)
+- [ ] Does the logic work? (mentally test the flow)
+- [ ] Are all parameters needed? (remove unnecessary ones)
+
+## 🎯 CODE PRINCIPLES
+
+```typescript
+// ✅ GOOD: minimal, functional
+case 'subscription.updated':
+  await resetTokens(userId, newPlan)
+
+// ❌ BAD: complex, unnecessary
+case 'subscription.updated':
+case 'subscription.created':  // not needed
+case 'user.updated':         // not needed
+  if (hasFeature) {          // extra check
+    await resetTokens(userId, newPlan)
+    await notifyUser()       // not needed
+    await logEvent()         // not needed
+  }
+```
+
+## 🚫 RED FLAG PHRASES
+
+Stop immediately if thinking:
+
+- "just in case"
+- "might be useful"
+- "for future expansion"
+- "optional parameter"
+- "additional function"
+
+## ⚡ 5-MINUTE RULE
+
+If you can't explain WHY each line of code exists in 5 minutes, the code is too complex.
+
+## 📋 QUALITY CHECKLIST
+
+Every code suggestion must pass:
+
+- [ ] Understood the task completely?
+- [ ] Studied existing codebase?
+- [ ] This is the minimal solution?
+- [ ] All functions will be used?
+- [ ] Not creating duplication?
+- [ ] Logic tested mentally?
+- [ ] Follows project patterns?
+
+## 🔍 TYPESCRIPT/REACT SPECIFIC
+
+- Use existing types and interfaces
+- Follow established naming conventions
+- Prefer functional components and hooks
+- Use existing utility functions
+- Match existing file structure
+
+## 💡 PREFERRED APPROACH
+
+1. **Read first** - understand existing code
+2. **Minimal change** - smallest possible modification
+3. **Test logic** - ensure it works before suggesting
+4. **User approval** - for any architectural changes
+
+Remember: User pays for CORRECT solutions from the first attempt, not for debugging your experiments.
