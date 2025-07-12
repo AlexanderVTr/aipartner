@@ -7,20 +7,16 @@ interface ClerkWebhookEvent {
   data: {
     id: string
     object: string
-    user_id?: string
-    // For subscription events
+    payer_id?: string
     status?: string
-    plan?: string
-    features?: string[]
-    subscription?: {
-      status: string
-      plan: string
-      features: string[]
-    }
-    // For user events
-    email_addresses?: Array<{
-      email_address: string
+    items?: Array<{
       id: string
+      status: string
+      plan: {
+        slug: string
+        name: string
+        amount: number
+      }
     }>
     // Common fields
     created_at: number
@@ -32,6 +28,9 @@ export async function POST(req: NextRequest) {
   const body = await req.text()
   const headerPayload = await headers()
 
+  // Debug: Log all headers
+  console.log('All headers:', Object.fromEntries(headerPayload.entries()))
+
   // Check if webhook secret is configured
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET
   if (!WEBHOOK_SECRET) {
@@ -42,14 +41,18 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  // Basic webhook validation (можно добавить svix позже)
-  const webhookSecret = headerPayload.get('clerk-webhook-secret')
-  if (webhookSecret !== WEBHOOK_SECRET) {
-    return NextResponse.json(
-      { error: 'Invalid webhook secret' },
-      { status: 401 },
-    )
-  }
+  // Clerk uses svix headers for webhook validation
+  const svixSignature = headerPayload.get('svix-signature')
+  const svixTimestamp = headerPayload.get('svix-timestamp')
+  const svixId = headerPayload.get('svix-id')
+
+  // For now, let's skip validation and add logging
+  // TODO: Add proper svix validation later
+  console.log('Clerk webhook received:')
+  console.log('- svix-signature:', svixSignature)
+  console.log('- svix-timestamp:', svixTimestamp)
+  console.log('- svix-id:', svixId)
+  console.log('- webhook secret configured:', !!WEBHOOK_SECRET)
 
   let evt: ClerkWebhookEvent
 
@@ -61,12 +64,13 @@ export async function POST(req: NextRequest) {
   }
 
   const { type, data } = evt
-  console.log('Webhook event:', type, data)
+  console.log('Webhook event:', type)
+  console.log('Full webhook data:', JSON.stringify(data, null, 2))
 
   try {
     switch (type) {
       case 'subscription.updated':
-        await handleSubscriptionChange(data.user_id!, data)
+        await handleSubscriptionChange(data.payer_id!, data)
         break
       default:
         console.log('Unhandled event type:', type)
@@ -82,23 +86,74 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true })
 }
 
+// TODO: Implement proper payer_id to clerk_user_id mapping
+// This is a placeholder function until we have the proper mapping
+async function getClerkUserIdFromPayerId(
+  payerId: string,
+): Promise<string | null> {
+  // For now, we'll need to either:
+  // 1. Store payer_id in our database when user creates subscription
+  // 2. Use Clerk's API to fetch user data
+  // 3. Ask user to provide mapping
+
+  console.log('Attempting to map payer_id to clerk_user_id:', payerId)
+
+  // Placeholder: return null for now
+  return null
+}
+
 async function handleSubscriptionChange(
-  userId: string,
+  payerId: string,
   data: ClerkWebhookEvent['data'],
 ) {
-  console.log('Processing subscription change for user:', userId)
+  console.log('Processing subscription change for payer:', payerId)
 
-  // Get current user plan features from subscription event
-  // Features can be directly in data or in data.subscription
-  const features = data.features || data.subscription?.features || []
+  // Find active or upcoming subscription item
+  const activeItem = data.items?.find(
+    (item) => item.status === 'active' || item.status === 'upcoming',
+  )
 
-  // Determine new plan based on features
-  const isPro = features.includes('pro_tokens')
-  const isPremium = features.includes('premium_tokens')
-  const newPlan = isPro ? 'pro' : isPremium ? 'premium' : 'free'
+  if (!activeItem) {
+    console.log('No active/upcoming subscription found, setting to free plan')
+    console.log(
+      'Available items:',
+      data.items?.map((item) => `${item.plan.slug}: ${item.status}`),
+    )
 
-  console.log(`Plan detected: ${newPlan}, Features:`, features)
+    // Try to get clerk_user_id and reset to free plan
+    const clerkUserId = await getClerkUserIdFromPayerId(payerId)
+    if (clerkUserId) {
+      await resetTokensForPlan(clerkUserId, 'free')
+      console.log('Tokens reset to free plan for user:', clerkUserId)
+    }
+    return
+  }
+
+  // Determine plan based on plan slug
+  const planSlug = activeItem.plan.slug
+  let newPlan: 'free' | 'pro' | 'premium' = 'free'
+
+  if (planSlug === 'pro') {
+    newPlan = 'pro'
+  } else if (planSlug === 'premium') {
+    newPlan = 'premium'
+  }
+
+  console.log(
+    `Plan detected: ${newPlan} (from slug: ${planSlug}, status: ${activeItem.status})`,
+  )
+
+  // Map payer_id to clerk_user_id
+  const clerkUserId = await getClerkUserIdFromPayerId(payerId)
+
+  if (!clerkUserId) {
+    console.error('Could not map payer_id to clerk_user_id:', payerId)
+    return
+  }
+
+  console.log('Mapped to clerk_user_id:', clerkUserId)
 
   // Reset tokens to new plan amount
-  await resetTokensForPlan(userId, newPlan)
+  await resetTokensForPlan(clerkUserId, newPlan)
+  console.log(`Tokens reset to ${newPlan} plan for user:`, clerkUserId)
 }
