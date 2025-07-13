@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
   try {
     switch (type) {
       case 'subscription.updated':
-        await handleSubscriptionChange(data.payer_id!, data)
+        await handleSubscriptionChange(data)
         break
       default:
         console.log('Unhandled event type:', type)
@@ -86,46 +86,13 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true })
 }
 
-// TODO: Implement proper payer_id to clerk_user_id mapping
-// This is a placeholder function until we have the proper mapping
-async function getClerkUserIdFromPayerId(
-  payerId: string,
-): Promise<string | null> {
-  // For now, we'll need to either:
-  // 1. Store payer_id in our database when user creates subscription
-  // 2. Use Clerk's API to fetch user data
-  // 3. Ask user to provide mapping
-
-  console.log('Attempting to map payer_id to clerk_user_id:', payerId)
-
-  // Placeholder: return null for now
-  return null
-}
-
-async function handleSubscriptionChange(
-  payerId: string,
-  data: ClerkWebhookEvent['data'],
-) {
-  console.log('Processing subscription change for payer:', payerId)
-
+async function handleSubscriptionChange(data: ClerkWebhookEvent['data']) {
   // Find active or upcoming subscription item
   const activeItem = data.items?.find(
     (item) => item.status === 'active' || item.status === 'upcoming',
   )
 
   if (!activeItem) {
-    console.log('No active/upcoming subscription found, setting to free plan')
-    console.log(
-      'Available items:',
-      data.items?.map((item) => `${item.plan.slug}: ${item.status}`),
-    )
-
-    // Try to get clerk_user_id and reset to free plan
-    const clerkUserId = await getClerkUserIdFromPayerId(payerId)
-    if (clerkUserId) {
-      await resetTokensForPlan(clerkUserId, 'free')
-      console.log('Tokens reset to free plan for user:', clerkUserId)
-    }
     return
   }
 
@@ -139,21 +106,6 @@ async function handleSubscriptionChange(
     newPlan = 'premium'
   }
 
-  console.log(
-    `Plan detected: ${newPlan} (from slug: ${planSlug}, status: ${activeItem.status})`,
-  )
-
-  // Map payer_id to clerk_user_id
-  const clerkUserId = await getClerkUserIdFromPayerId(payerId)
-
-  if (!clerkUserId) {
-    console.error('Could not map payer_id to clerk_user_id:', payerId)
-    return
-  }
-
-  console.log('Mapped to clerk_user_id:', clerkUserId)
-
   // Reset tokens to new plan amount
-  await resetTokensForPlan(clerkUserId, newPlan)
-  console.log(`Tokens reset to ${newPlan} plan for user:`, clerkUserId)
+  await resetTokensForPlan(newPlan)
 }

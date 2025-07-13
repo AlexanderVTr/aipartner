@@ -59,10 +59,10 @@ export async function decrementTokensDB() {
   }
 }
 
-export async function resetTokensForPlan(
-  clerkUserId: string,
-  newPlan: 'free' | 'pro' | 'premium',
-) {
+export async function resetTokensForPlan(newPlan: 'free' | 'pro' | 'premium') {
+  const user = await currentUser()
+  if (!user) return
+
   const newTokens = TOKENS_PER_PLAN[newPlan]
 
   const { error } = await supabaseAdmin
@@ -71,15 +71,12 @@ export async function resetTokensForPlan(
       tokens_balance: newTokens,
       // updated_at: new Date().toISOString(),
     })
-    .eq('clerk_user_id', clerkUserId)
+    .eq('clerk_user_id', user.id)
 
   if (error) {
     console.error('Error resetting tokens:', error)
     throw error
   }
 
-  console.log(
-    `Reset tokens for user ${clerkUserId} to ${newPlan} plan: ${newTokens} tokens`,
-  )
   return newTokens
 }
