@@ -38,6 +38,8 @@ export async function getTokensFromDB() {
   }
 
   // Check if plan has changed and update tokens
+  // It's working just after user upgrade to better plan
+  // if user downgrade to worse plan, it's wait for the plan date to change
   if (data.plan !== plan) {
     const tokens = await resetTokensForPlan(plan)
     return tokens
