@@ -14,7 +14,9 @@ users {
     clerk_user_id TEXT UNIQUE NOT NULL  -- Clerk authentication ID
     email TEXT NOT NULL
     tokens_balance INTEGER DEFAULT 0    -- User's token balance
+    plan TEXT
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    update_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 }
 
 messages {
