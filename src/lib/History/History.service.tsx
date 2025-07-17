@@ -42,8 +42,8 @@ export async function saveMessageToDB(message: string, role: string) {
   if (messageError) console.error('embeddedError', embeddedError)
 }
 
-// function found similar sentences in the vector DB
-export async function findSimilarMessages(
+// Find similar user messages only using dedicated DB function
+export async function findSimilarUserMessages(
   query: string,
   userId: string,
   limit: number = 10,
@@ -54,22 +54,58 @@ export async function findSimilarMessages(
       input: query,
     })
 
-    const { data, error } = await supabaseAdmin.rpc('find_similar_messages', {
-      query_embedding: embedding.data[0].embedding,
-      clerk_user_id: userId,
-      include_assistant: true,
-      similarity_threshold: 0.3,
-      match_count: limit,
-    })
+    const { data, error } = await supabaseAdmin.rpc(
+      'find_similar_user_messages',
+      {
+        query_embedding: embedding.data[0].embedding,
+        clerk_user_id: userId,
+        similarity_threshold: 0.3, // 0-1 how similar the messages need to be
+        match_count: limit, // how many messages will be checked
+      },
+    )
 
     if (error) {
-      console.error('Error finding similar messages:', error)
+      console.error('Error finding similar user messages:', error)
       return []
     }
 
     return data || []
   } catch (error) {
-    console.error('Error in findSimilarMessages:', error)
+    console.error('Error in findSimilarUserMessages:', error)
+    return []
+  }
+}
+
+// Find similar assistant messages only using dedicated DB function
+export async function findSimilarAssistantMessages(
+  query: string,
+  userId: string,
+  limit: number = 10,
+) {
+  try {
+    const embedding = await openaiEmbedding.embeddings.create({
+      model: 'text-embedding-3-small',
+      input: query,
+    })
+
+    const { data, error } = await supabaseAdmin.rpc(
+      'find_similar_assistant_messages',
+      {
+        query_embedding: embedding.data[0].embedding,
+        clerk_user_id: userId,
+        similarity_threshold: 0.3, // 0-1 how similar the messages need to be
+        match_count: limit, // how many messages will be checked
+      },
+    )
+
+    if (error) {
+      console.error('Error finding similar assistant messages:', error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Error in findSimilarAssistantMessages:', error)
     return []
   }
 }

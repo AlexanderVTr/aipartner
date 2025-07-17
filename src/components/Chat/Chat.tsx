@@ -17,17 +17,12 @@ import { CHAT_MESSAGES, CHAT_ROLES, PER_PAGE } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
 import {
-  findSimilarMessages,
+  findSimilarUserMessages,
   getMessages,
   saveMessageToDB,
 } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
-
-interface Message {
-  role: string
-  content: string
-}
 
 export default function Chat() {
   const router = useRouter()
@@ -116,20 +111,20 @@ export default function Chat() {
 
     try {
       //Preparing context for response
-      const similarMessages =
-        user && (await findSimilarMessages(userMessage.content, user.id, 5))
+      const similarUserMessages =
+        user && (await findSimilarUserMessages(userMessage.content, user.id, 5))
 
-      const context =
-        similarMessages && similarMessages.length > 0
-          ? similarMessages
-              .map((msg: Message) => `${msg.role}: ${msg.content}`)
-              .join('\n')
+      const userContext =
+        similarUserMessages.length > 0
+          ? similarUserMessages
+              .map((msg: ChatMessage) => `${msg.content}`)
+              .join('\n') //join the messages with a new line
           : undefined
 
       const response = await callOpenAi({
         messages: newMessages,
         reasoning,
-        context,
+        userContext,
       })
 
       // not awaiting for the response to save the user message
