@@ -1,4 +1,4 @@
-import { ChatMessage } from '@/lib/ai/callOpenAi'
+import { ChatMessage } from '@/lib/ai/langGraph/types'
 import { RefObject } from 'react'
 
 export const scrollToBottom = (

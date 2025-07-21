@@ -1,6 +1,6 @@
 'use server'
 
-import { StateGraph, START, END } from '@langchain/langgraph/'
+import { StateGraph, START, END } from '@langchain/langgraph'
 import { AgentState } from './agentState'
 import { Options } from './types'
 import { prepareUserContext } from './prepareUserContext'
