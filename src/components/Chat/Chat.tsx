@@ -2,11 +2,11 @@
 
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
-import callOpenAi from '@/lib/ai/callOpenAi'
+import { runAgent } from '@/lib/ai/langGraph/agent'
 import { useRef, useState, useEffect } from 'react'
 import styles from './Chat.module.scss'
 import { ArrowUpFromDot, ArrowDown, ArrowUp } from 'lucide-react'
-import { ChatMessage } from '@/lib/ai/callOpenAi'
+import { ChatMessage } from '@/lib/ai/langGraph/types'
 import {
   scrollToBottom,
   handleKeyDown,
@@ -16,18 +16,9 @@ import {
 import { CHAT_MESSAGES, CHAT_ROLES, PER_PAGE } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { useTokens } from '@/contexts/TokensContext'
-import {
-  findSimilarMessages,
-  getMessages,
-  saveMessageToDB,
-} from '@/lib/History/History.service'
+import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
-
-interface Message {
-  role: string
-  content: string
-}
 
 export default function Chat() {
   const router = useRouter()
@@ -115,22 +106,16 @@ export default function Chat() {
     setIsLoading(true)
 
     try {
-      //Preparing context for response
-      const similarMessages =
-        user && (await findSimilarMessages(userMessage.content, user.id, 5))
-
-      const context =
-        similarMessages && similarMessages.length > 0
-          ? similarMessages
-              .map((msg: Message) => `${msg.role}: ${msg.content}`)
-              .join('\n')
-          : undefined
-
-      const response = await callOpenAi({
+      const response = await runAgent({
         messages: newMessages,
         reasoning,
-        context,
       })
+
+      // const response = await callOpenAi({
+      //   messages: newMessages,
+      //   reasoning,
+      //   userContext,
+      // })
 
       // not awaiting for the response to save the user message
       // to avoid blocking the UI - FIRE AND FORGET
