@@ -1,0 +1,47 @@
+graph TD
+    A["User Input"] --> B["Basic Agent"]
+    A --> C["Advanced Agent"]
+    
+    subgraph "Basic Agent Flow"
+        B --> B1["Prepare User Context"]
+        B1 --> B2["Generate Response"]
+        B2 --> B3["Check Repetition"]
+        B3 --> B4{"Similar Content?"}
+        B4 -->|Yes| B5["Regenerate Response"]
+        B4 -->|No| B6["Return Response"]
+        B5 --> B6
+    end
+    
+    subgraph "Advanced Agent Flow"
+        C --> C1["Analyze User Input"]
+        C1 --> C2["Determine Mood"]
+        C2 --> C3["Prepare Enhanced Context"]
+        C3 --> C4["Generate Response with Tools"]
+        C4 --> C5{"Tool Calls Needed?"}
+        C5 -->|Yes| C6["Execute Tools"]
+        C5 -->|No| C7["Check Repetition"]
+        C6 --> C7
+        C7 --> C8{"Similar Content?"}
+        C8 -->|Yes| C9["Regenerate with Context"]
+        C8 -->|No| C10["Return Enhanced Response"]
+        C9 --> C10
+    end
+    
+    subgraph "Available Tools"
+        T1["Mood Analysis"]
+        T2["History Search"]
+        T3["Conversation Summary"]
+    end
+    
+    C6 -.-> T1
+    C6 -.-> T2
+    C6 -.-> T3
+    
+    B6 --> D["Final Response"]
+    C10 --> E["Enhanced Response + Metadata"]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+    style E fill:#fce4ec 

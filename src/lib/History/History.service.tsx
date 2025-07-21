@@ -93,7 +93,7 @@ export async function findSimilarAssistantMessages(
       {
         query_embedding: embedding.data[0].embedding,
         clerk_user_id: userId,
-        similarity_threshold: 0.3, // 0-1 how similar the messages need to be
+        similarity_threshold: 0.7, // 0-1 how similar the messages need to be
         match_count: limit, // how many messages will be checked
       },
     )
