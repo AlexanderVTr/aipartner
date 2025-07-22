@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Fira_Sans, Roboto_Flex } from 'next/font/google'
 import './globals.scss'
 import { ClerkProvider } from '@clerk/nextjs'
+import { Analytics } from '@vercel/analytics/next'
 
 const robotoFlex = Roboto_Flex({
   variable: '--font-roboto-flex',
@@ -30,6 +31,7 @@ export default function RootLayout({
       <html lang='en'>
         <body className={`${robotoFlex.variable} ${firaSans.variable}`}>
           {children}
+          <Analytics />
         </body>
       </html>
     </ClerkProvider>
