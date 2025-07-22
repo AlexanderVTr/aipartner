@@ -1,4 +1,3 @@
-import { Container } from '@/components/UI'
 import { PricingTable, SignUpButton } from '@clerk/nextjs'
 import Header from '@/components/Header/Header'
 import { currentUser } from '@clerk/nextjs/server'
