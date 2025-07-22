@@ -111,12 +111,6 @@ export default function Chat() {
         reasoning,
       })
 
-      // const response = await callOpenAi({
-      //   messages: newMessages,
-      //   reasoning,
-      //   userContext,
-      // })
-
       // not awaiting for the response to save the user message
       // to avoid blocking the UI - FIRE AND FORGET
       saveMessageToDB(userMessage.content, CHAT_ROLES.USER)

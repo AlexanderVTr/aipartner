@@ -10,16 +10,13 @@ export async function generateFirstResponse(state: typeof AgentState.State) {
   console.log('Agent: Generating first response')
 
   const { userContext, messages, reasoning } = state
+
   const systemPrompt = userContext
     ? `${SYSTEM_PROMPT}
-
 IMPORTANT: Always respond directly to the user's CURRENT message first.
-
 Previous conversation context (for reference only):
 ${userContext}
-
-Current user message: "${messages[messages.length - 1]?.content}"
-
+CURRENT USER MESSAGE: "${messages[messages.length - 1]?.content}"
 PRIORITY: Answer the current question directly and accurately. Use context only if relevant to the current question.`
     : SYSTEM_PROMPT
 
