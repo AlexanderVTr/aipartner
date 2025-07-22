@@ -7,7 +7,7 @@ import styles from './Pricing.module.scss'
 export default async function Home() {
   const user = await currentUser()
   return (
-    <Container>
+    <>
       <Header />
       {user ? (
         <PricingTable />
@@ -16,6 +16,6 @@ export default async function Home() {
           Please <SignUpButton /> to view pricing table
         </div>
       )}
-    </Container>
+    </>
   )
 }

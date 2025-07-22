@@ -217,6 +217,7 @@ export default function Chat() {
       </div>
       <div className={styles.input}>
         <textarea
+          name='message'
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e, handleSendMessage)}
           className={styles.textarea}

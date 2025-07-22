@@ -5,11 +5,15 @@ import { TokensProvider } from '@/contexts/TokensContext'
 
 export default async function Home() {
   return (
-    <Container>
-      <TokensProvider>
-        <Chat />
-        <Footer />
-      </TokensProvider>
-    </Container>
+    <div className='chat-page'>
+      <Container>
+        <TokensProvider>
+          <Chat />
+          <Footer />
+        </TokensProvider>
+      </Container>
+      <div className='shade'></div>
+      <div className='shade2'></div>
+    </div>
   )
 }

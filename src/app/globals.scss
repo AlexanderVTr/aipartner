@@ -7,8 +7,7 @@
 html,
 body {
   position: relative;
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
 }
 
 body {
@@ -17,6 +16,13 @@ body {
   @include body-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.chat-page {
+  min-height: 100%;
+  height: auto;
+  overflow: hidden;
+  position: relative;
 }
 
 a,
