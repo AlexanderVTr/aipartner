@@ -32,6 +32,7 @@ export default function SpeechToTextSimpleButton({
   setInput,
 }: SpeechToTextSimpleButtonProps) {
   const [isListening, setIsListening] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null)
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const finalTranscriptRef = useRef('')
