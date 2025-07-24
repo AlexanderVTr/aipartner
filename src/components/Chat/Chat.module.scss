@@ -114,7 +114,9 @@
 .actions {
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
   padding: 0 10px;
+  gap: 16px;
 }
 
 .arrow_down {
