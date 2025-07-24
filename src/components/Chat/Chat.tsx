@@ -5,7 +5,7 @@ import { Button } from '@/components/UI'
 import { runAgent } from '@/lib/ai/langGraph/agent'
 import { useRef, useState, useEffect } from 'react'
 import styles from './Chat.module.scss'
-import { ArrowUpFromDot, ArrowDown, ArrowUp, Smile } from 'lucide-react'
+import { ArrowUpFromDot, ArrowDown, ArrowUp } from 'lucide-react'
 import { ChatMessage } from '@/lib/ai/langGraph/types'
 import {
   scrollToBottom,
