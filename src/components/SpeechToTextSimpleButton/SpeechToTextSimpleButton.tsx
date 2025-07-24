@@ -1,5 +1,5 @@
 import { Mic } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styles from './SpeechToTextSimpleButton.module.scss'
 
 interface SpeechRecognitionEvent {
@@ -31,51 +31,137 @@ export default function SpeechToTextSimpleButton({
   currentInput,
   setInput,
 }: SpeechToTextSimpleButtonProps) {
-  const [isSpeeking, setIsSpeeking] = useState(false)
+  const [isListening, setIsListening] = useState(false)
+  const recognitionRef = useRef<any>(null)
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const finalTranscriptRef = useRef('')
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+    }
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current)
+      silenceTimeoutRef.current = null
+    }
+    setIsListening(false)
+  }
 
   const handleAudioMessage = () => {
-    // Firefox/Opera not supported
+    // Stop listening if already listening
+    if (isListening) {
+      stopListening()
+      return
+    }
+
+    // Check browser support
     if (!window || !('webkitSpeechRecognition' in window)) {
-      alert('Speech recognition is not available')
+      alert('Speech recognition is not available in this browser')
       return
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const recognition = new (window as any).webkitSpeechRecognition()
+    recognitionRef.current = recognition
+    finalTranscriptRef.current = ''
+
+    // Set recognition options
     recognition.continuous = true
     recognition.interimResults = true
 
-    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      alert('Speech recognition error: ' + event.error)
-      setIsSpeeking(false)
+    // Start listening
+    setIsListening(true)
+
+    recognition.onstart = () => {
+      console.log('Speech recognition started')
     }
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = event.results[0][0].transcript
-      setInput(currentInput + ' ' + transcript)
+      let interimTranscript = ''
+      let finalTranscript = finalTranscriptRef.current
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i]
+        const transcript = result[0].transcript
+
+        if (result.isFinal) {
+          finalTranscript += transcript + ' '
+        } else {
+          interimTranscript += transcript
+        }
+      }
+
+      finalTranscriptRef.current = finalTranscript
+
+      const fullTranscript = finalTranscript + interimTranscript
+      if (fullTranscript.trim()) {
+        setInput(
+          currentInput + (currentInput ? ' ' : '') + fullTranscript.trim(),
+        )
+      }
+
+      //Reset silence timeout when we have final results
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current)
+      }
+
+      //Reset timeout on new speech
+      silenceTimeoutRef.current = setTimeout(() => {
+        stopListening()
+      }, 3000)
     }
 
-    let timeoutId: NodeJS.Timeout
-    recognition.onspeechstart = () => {
-      setIsSpeeking(true)
-      clearTimeout(timeoutId)
+    recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+      console.error('Speech recognition error:', event.error)
+
+      // Don't show alert for common errors
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
+        alert('Speech recognition error: ' + event.error)
+      }
+
+      stopListening()
     }
 
-    recognition.onspeechend = () => {
-      timeoutId = setTimeout(() => {
-        recognition.stop()
-        setIsSpeeking(false)
-      }, 2000)
+    recognition.onend = () => {
+      console.log('Speech recognition ended')
+      setIsListening(false)
+
+      // Clean up timeout
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current)
+        silenceTimeoutRef.current = null
+      }
+
+      // Ensure final transcript is applied
+      if (finalTranscriptRef.current.trim()) {
+        setInput(
+          currentInput +
+            (currentInput ? ' ' : '') +
+            finalTranscriptRef.current.trim(),
+        )
+      }
     }
 
-    recognition.start()
+    try {
+      recognition.start()
+    } catch (error) {
+      console.error('Failed to start speech recognition:', error)
+      stopListening()
+    }
   }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopListening()
+    }
+  }, [])
 
   return (
     <button
-      className={`${styles.button} ${isSpeeking ? styles.buttonOn : ''}`}
+      className={`${styles.button} ${isListening ? styles.buttonOn : ''}`}
       onClick={handleAudioMessage}
-      disabled={isSpeeking}>
+      title={isListening ? 'Stop listening' : 'Start voice input'}>
       <Mic size={18} />
     </button>
   )
