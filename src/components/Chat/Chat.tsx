@@ -19,6 +19,7 @@ import { useTokens } from '@/contexts/TokensContext'
 import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
+import SpeechToTextSimpleButton from '../SpeechToTextSimpleButton/SpeechToTextSimpleButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -225,6 +226,7 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
+          <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
           <Button
             onClick={handleSendMessage}
             variant='round'

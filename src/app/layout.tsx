@@ -17,8 +17,9 @@ const firaSans = Fira_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'AiGirls',
-  description: 'AiGirls',
+  title: 'AiSha - Your AI Companion for Meaningful Conversations',
+  description:
+    'Meet AiSha, an emotionally intelligent AI companion who understands your mood, remembers your conversations, and creates deep, meaningful connections. Experience personalized dialogue with an AI that truly listens and responds with empathy.',
 }
 
 export default function RootLayout({
