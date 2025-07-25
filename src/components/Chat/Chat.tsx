@@ -20,6 +20,7 @@ import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
 import SpeechToTextSimpleButton from '../SpeechToTextSimpleButton/SpeechToTextSimpleButton'
+import SpeechToTextAdvancedButton from '../SpeechToTextAdvancedButton/SpeechToTextAdvancedButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -226,6 +227,10 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
+          <SpeechToTextAdvancedButton
+            currentInput={input}
+            setInput={setInput}
+          />
           <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
           <Button
             onClick={handleSendMessage}

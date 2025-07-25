@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.20.2",
+    "@elevenlabs/elevenlabs-js": "^2.7.0",
     "@langchain/community": "^0.3.21",
     "@langchain/core": "^0.3.29",
     "@langchain/langgraph": "^0.3.10",
@@ -42,7 +43,7 @@
     "eslint-config-next": "15.3.3",
     "prettier": "^3.5.3",
     "sass": "^1.89.1",
-    "typescript": "^5",
-    "standard-version": "^9.5.0"
+    "standard-version": "^9.5.0",
+    "typescript": "^5"
   }
 }
