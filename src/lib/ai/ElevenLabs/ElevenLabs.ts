@@ -1,6 +1,6 @@
 'use server'
 
-import { ElevenLabsClient, play } from '@elevenlabs/elevenlabs-js'
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
 
 export async function elevenLabs() {
   return new ElevenLabsClient({
@@ -28,7 +28,7 @@ export async function convertTextToSpeech(text: string) {
   try {
     const client = await elevenLabs()
 
-    const audio = await client.textToSpeech.convert('JBFqnCBsd6RMkjVDRZzb', {
+    const audio = await client.textToSpeech.convert('gedzfqL7OGdPbwm0ynTP', {
       text: text,
       modelId: 'eleven_multilingual_v2',
       outputFormat: 'mp3_44100_128',
