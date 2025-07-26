@@ -3,6 +3,7 @@ import { Phone, PhoneOffIcon } from 'lucide-react'
 import styles from './SpeechToTextAdvancedButton.module.scss'
 import { convertSpeechToText } from '@/lib/ai/ElevenLabs/ElevenLabs'
 import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
+import { SILENCE_DURATION, SILENCE_THRESHOLD } from '@/constants/chat'
 
 interface SpeechToTextSimpleButtonProps {
   currentInput: string
@@ -30,15 +31,35 @@ export default function SpeechToTextAdvancedButton({
     }
   }, [cleanup])
 
-  const handleCallOff = async () => {
+  const handleCallOff = async (isManualClick: boolean = false) => {
     if (isProcessingRef.current) {
       return
     }
 
     isProcessingRef.current = true
     await finishRecording()
-    setIsVideoCall(false)
-    cleanup()
+
+    // Only close UI and stop recording if it's a manual button click
+    if (isManualClick) {
+      setIsVideoCall(false)
+      cleanup() // Stop recording and cleanup resources
+    } else {
+      // For automatic silence detection - restart recording for next message
+      try {
+        //TODO: It would be great dynamically update this values based on
+        await startRecording({
+          silenceThreshold: SILENCE_THRESHOLD,
+          silenceDuration: SILENCE_DURATION,
+          onSilenceDetected: () => handleCallOff(false), // Auto-stop on silence - don't close UI
+        })
+      } catch (error) {
+        console.error('Error restarting recording:', error)
+        // If restart fails, close the UI
+        setIsVideoCall(false)
+        cleanup()
+      }
+    }
+
     isProcessingRef.current = false
   }
 
@@ -46,9 +67,9 @@ export default function SpeechToTextAdvancedButton({
     setIsVideoCall(true)
     try {
       await startRecording({
-        silenceThreshold: 30,
-        silenceDuration: 3000,
-        onSilenceDetected: handleCallOff, // Auto-stop on silence
+        silenceThreshold: SILENCE_THRESHOLD,
+        silenceDuration: SILENCE_DURATION,
+        onSilenceDetected: () => handleCallOff(false), // Auto-stop on silence - don't close UI
       })
     } catch (error) {
       console.error('Error starting recording:', error)
@@ -105,7 +126,6 @@ export default function SpeechToTextAdvancedButton({
 
       // Apply result
       if (transcription?.text) {
-        //TODO Push message to the chat instead of SetInput
         // Next get message from the Assistent and call new ELEVENLabs api connected to Text to speech
         const newText =
           currentInput + (currentInput ? ' ' : '') + transcription.text
@@ -136,7 +156,9 @@ export default function SpeechToTextAdvancedButton({
             />
           </div>
           <div className={styles.callFrameActions}>
-            <button className={`${styles.button}`} onClick={handleCallOff}>
+            <button
+              className={`${styles.button}`}
+              onClick={() => handleCallOff(true)}>
               <PhoneOffIcon size={18} />
             </button>
           </div>

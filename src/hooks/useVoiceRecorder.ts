@@ -1,3 +1,5 @@
+import { SILENCE_THRESHOLD } from '@/constants/chat'
+import { SILENCE_DURATION } from '@/constants/chat'
 import { useCallback, useRef } from 'react'
 
 export function useVoiceRecorder() {
@@ -89,8 +91,8 @@ export function useVoiceRecorder() {
 
           // Start analyzing
           analyzeAudio(
-            options.silenceThreshold || 30,
-            options.silenceDuration || 3000,
+            options.silenceThreshold || SILENCE_THRESHOLD,
+            options.silenceDuration || SILENCE_DURATION,
           )
         }
       } catch (error) {

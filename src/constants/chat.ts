@@ -37,3 +37,5 @@ export const TOKENS_PER_PLAN = {
 } as const
 
 export const PER_PAGE = 20
+export const SILENCE_THRESHOLD = 10
+export const SILENCE_DURATION = 3000 // 3000ms
