@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Phone, PhoneOffIcon } from 'lucide-react'
 import styles from './SpeechToTextAdvancedButton.module.scss'
 import { convertSpeechToText } from '@/lib/ai/ElevenLabs/ElevenLabs'
-import { useVoiceRecorder } from '@/lib/FilesOperations/useVoiceRecorder'
-import { useSilenceDetection } from '@/hooks/useSilenceDetection'
+import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
 
 interface SpeechToTextSimpleButtonProps {
   currentInput: string
@@ -15,48 +14,101 @@ export default function SpeechToTextAdvancedButton({
   setInput,
 }: SpeechToTextSimpleButtonProps) {
   const [isVideoCall, setIsVideoCall] = useState(false)
-  const { isRecording, startRecording, stopRecording, createAudioFile } =
-    useVoiceRecorder()
+  const {
+    isRecordingRef,
+    startRecording,
+    stopRecording,
+    createAudioFile,
+    cleanup,
+  } = useVoiceRecorder()
+  const isProcessingRef = useRef(false)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanup()
+    }
+  }, [cleanup])
 
   const handleCallOff = async () => {
-    stopMonitoring()
+    if (isProcessingRef.current) {
+      return
+    }
+
+    isProcessingRef.current = true
     await finishRecording()
     setIsVideoCall(false)
+    cleanup()
+    isProcessingRef.current = false
   }
-
-  const { startMonitoring, stopMonitoring } = useSilenceDetection({
-    silenceThreshold: 30,
-    silenceDuration: 3000,
-    onSilenceDetected: handleCallOff,
-  })
 
   const handleCallOn = async () => {
     setIsVideoCall(true)
     try {
-      await startRecording()
-      await startMonitoring()
+      await startRecording({
+        silenceThreshold: 30,
+        silenceDuration: 3000,
+        onSilenceDetected: handleCallOff, // Auto-stop on silence
+      })
     } catch (error) {
       console.error('Error starting recording:', error)
     }
   }
 
   const finishRecording = async () => {
-    if (!isRecording) {
+    if (!isRecordingRef.current) {
       return
     }
 
     try {
       const audioBlob = await stopRecording()
+
+      if (audioBlob.size < 1000) {
+        console.log('Audio file too small, skipping transcription')
+        return
+      }
+
       const audioFile = createAudioFile(audioBlob)
 
-      const transcription = await convertSpeechToText(audioFile)
-      console.log('Transcription:', transcription)
+      // Retry logic for ElevenLabs API
+      let transcription = null
+      let attempts = 0
+      const maxAttempts = 3
 
-      if (transcription.text) {
+      while (attempts < maxAttempts && !transcription?.text) {
+        attempts++
+
+        try {
+          transcription = await convertSpeechToText(audioFile)
+
+          if (transcription?.text) {
+            break
+          } else {
+            if (attempts < maxAttempts) {
+              const delay = 1000 * attempts
+              await new Promise((resolve) => setTimeout(resolve, delay))
+            }
+          }
+        } catch (apiError) {
+          console.error(
+            `ElevenLabs API error on attempt ${attempts}:`,
+            apiError,
+          )
+          if (attempts < maxAttempts) {
+            const delay = 1000 * Math.pow(2, attempts - 1)
+            await new Promise((resolve) => setTimeout(resolve, delay))
+          } else {
+            console.error('💥 All transcription attempts failed')
+          }
+        }
+      }
+
+      // Apply result
+      if (transcription?.text) {
         setInput(currentInput + (currentInput ? ' ' : '') + transcription.text)
       }
     } catch (error) {
-      console.error('Error transcribing audio:', error)
+      console.error('Error in finishRecording:', error)
     }
   }
 
