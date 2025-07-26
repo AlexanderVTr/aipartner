@@ -37,16 +37,24 @@ export default function SpeechToTextAdvancedButton({
     }
 
     isProcessingRef.current = true
-    await finishRecording()
 
-    // Only close UI and stop recording if it's a manual button click
+    // For manual click - close UI immediately for better UX
     if (isManualClick) {
       setIsVideoCall(false)
-      cleanup() // Stop recording and cleanup resources
-    } else {
-      // For automatic silence detection - restart recording for next message
+      cleanup() // Stop recording immediately
+
+      // Process any remaining recording in background
       try {
-        //TODO: It would be great dynamically update this values based on
+        await finishRecording()
+      } catch (error) {
+        console.error('Error processing final recording:', error)
+      }
+    } else {
+      // For automatic silence detection - process recording first, then restart
+      await finishRecording()
+
+      // Restart recording for next message
+      try {
         await startRecording({
           silenceThreshold: SILENCE_THRESHOLD,
           silenceDuration: SILENCE_DURATION,
@@ -139,7 +147,10 @@ export default function SpeechToTextAdvancedButton({
 
   return (
     <>
-      <button className={`${styles.button}`} onClick={handleCallOn}>
+      <button
+        className={`${styles.button} ${isVideoCall ? styles.buttonOn : ''}`}
+        disabled={isVideoCall}
+        onClick={handleCallOn}>
         <Phone size={18} />
       </button>
       {isVideoCall && (
