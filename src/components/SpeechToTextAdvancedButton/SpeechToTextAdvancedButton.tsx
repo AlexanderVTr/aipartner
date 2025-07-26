@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Phone, PhoneOffIcon } from 'lucide-react'
 import styles from './SpeechToTextAdvancedButton.module.scss'
 import { convertSpeechToText } from '@/lib/ai/ElevenLabs/ElevenLabs'
@@ -12,9 +13,11 @@ export default function SpeechToTextAdvancedButton({
   currentInput,
   setInput,
 }: SpeechToTextSimpleButtonProps) {
+  const [isVideoCall, setIsVideoCall] = useState(false)
   const { startRecording, stopRecording, createAudioFile } = useVoiceRecorder()
 
   const handleCallOn = async () => {
+    setIsVideoCall(true)
     try {
       await startRecording()
     } catch (error) {
@@ -38,6 +41,7 @@ export default function SpeechToTextAdvancedButton({
     } catch (error) {
       console.error('Error transcribing audio:', error)
     }
+    setIsVideoCall(false)
   }
 
   return (
@@ -45,9 +49,26 @@ export default function SpeechToTextAdvancedButton({
       <button className={`${styles.button}`} onClick={handleCallOn}>
         <Phone size={18} />
       </button>
-      <button className={`${styles.button}`} onClick={handleCallOff}>
-        <PhoneOffIcon size={18} />
-      </button>
+      {isVideoCall && (
+        <div className={styles.callFrame}>
+          <div className={styles.videoContainer}>
+            <video
+              src='/assets/avatar/Aishav1.mp4'
+              autoPlay
+              loop
+              muted
+              playsInline
+              controls={false}
+              className={styles.avatarVideo}
+            />
+          </div>
+          <div className={styles.callFrameActions}>
+            <button className={`${styles.button}`} onClick={handleCallOff}>
+              <PhoneOffIcon size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </>
   )
 }
