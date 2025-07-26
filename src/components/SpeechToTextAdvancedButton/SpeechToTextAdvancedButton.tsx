@@ -3,6 +3,7 @@ import { Phone, PhoneOffIcon } from 'lucide-react'
 import styles from './SpeechToTextAdvancedButton.module.scss'
 import { convertSpeechToText } from '@/lib/ai/ElevenLabs/ElevenLabs'
 import { useVoiceRecorder } from '@/lib/FilesOperations/useVoiceRecorder'
+import { useSilenceDetection } from '@/hooks/useSilenceDetection'
 
 interface SpeechToTextSimpleButtonProps {
   currentInput: string
@@ -14,23 +15,39 @@ export default function SpeechToTextAdvancedButton({
   setInput,
 }: SpeechToTextSimpleButtonProps) {
   const [isVideoCall, setIsVideoCall] = useState(false)
-  const { startRecording, stopRecording, createAudioFile } = useVoiceRecorder()
+  const { isRecording, startRecording, stopRecording, createAudioFile } =
+    useVoiceRecorder()
+
+  const handleCallOff = async () => {
+    stopMonitoring()
+    await finishRecording()
+    setIsVideoCall(false)
+  }
+
+  const { startMonitoring, stopMonitoring } = useSilenceDetection({
+    silenceThreshold: 30,
+    silenceDuration: 3000,
+    onSilenceDetected: handleCallOff,
+  })
 
   const handleCallOn = async () => {
     setIsVideoCall(true)
     try {
       await startRecording()
+      await startMonitoring()
     } catch (error) {
       console.error('Error starting recording:', error)
     }
   }
 
-  const handleCallOff = async () => {
+  const finishRecording = async () => {
+    if (!isRecording) {
+      return
+    }
+
     try {
       const audioBlob = await stopRecording()
       const audioFile = createAudioFile(audioBlob)
-
-      console.log('Audio file created:', audioFile.size, 'bytes')
 
       const transcription = await convertSpeechToText(audioFile)
       console.log('Transcription:', transcription)
@@ -41,7 +58,6 @@ export default function SpeechToTextAdvancedButton({
     } catch (error) {
       console.error('Error transcribing audio:', error)
     }
-    setIsVideoCall(false)
   }
 
   return (
