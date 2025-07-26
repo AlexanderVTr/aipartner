@@ -6,12 +6,12 @@ import { useVoiceRecorder } from '@/hooks/useVoiceRecorder'
 
 interface SpeechToTextSimpleButtonProps {
   currentInput: string
-  setInput: (input: string) => void
+  onMessageSend: (newText: string) => void
 }
 
 export default function SpeechToTextAdvancedButton({
   currentInput,
-  setInput,
+  onMessageSend,
 }: SpeechToTextSimpleButtonProps) {
   const [isVideoCall, setIsVideoCall] = useState(false)
   const {
@@ -70,7 +70,7 @@ export default function SpeechToTextAdvancedButton({
 
       const audioFile = createAudioFile(audioBlob)
 
-      // Retry logic for ElevenLabs API
+      // Retry logic for ElevenLabs API in case load balancer or network errors
       let transcription = null
       let attempts = 0
       const maxAttempts = 3
@@ -105,7 +105,12 @@ export default function SpeechToTextAdvancedButton({
 
       // Apply result
       if (transcription?.text) {
-        setInput(currentInput + (currentInput ? ' ' : '') + transcription.text)
+        //TODO Push message to the chat instead of SetInput
+        // Next get message from the Assistent and call new ELEVENLabs api connected to Text to speech
+        const newText =
+          currentInput + (currentInput ? ' ' : '') + transcription.text
+        console.log(newText)
+        await onMessageSend(newText)
       }
     } catch (error) {
       console.error('Error in finishRecording:', error)

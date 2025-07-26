@@ -87,17 +87,28 @@ export default function Chat() {
   }
 
   // SEND MESSAGE FUNCTION
-  const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
-    if (!input.trim() || isLoading) return
+  const handleSendMessage = async (
+    newText?: string,
+    reasoning?: { effort: 'low' | 'high' },
+  ) => {
+    // Use newText if provided (from voice), otherwise use input
+    const textToSend = newText || input
+
+    if (!textToSend.trim() || isLoading) return
 
     if (tokens === 0) {
       router.push('/pricing')
       return
     }
 
+    // Set input to newText if provided (for voice messages)
+    if (newText) {
+      setInput(newText)
+    }
+
     const userMessage = {
       role: CHAT_ROLES.USER,
-      content: input.trim(),
+      content: textToSend.trim(),
       created_at: new Date().toISOString(),
     }
 
@@ -229,7 +240,7 @@ export default function Chat() {
         <div className={styles.actions}>
           <SpeechToTextAdvancedButton
             currentInput={input}
-            setInput={setInput}
+            onMessageSend={handleSendMessage}
           />
           <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
           <Button
