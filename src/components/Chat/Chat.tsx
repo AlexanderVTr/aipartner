@@ -21,6 +21,7 @@ import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
 import SpeechToTextSimpleButton from '../SpeechToTextSimpleButton/SpeechToTextSimpleButton'
 import SpeechToTextAdvancedButton from '../SpeechToTextAdvancedButton/SpeechToTextAdvancedButton'
+import { convertTextToSpeechClient } from '@/lib/ai/ElevenLabs/ElevenLabsClient'
 
 export default function Chat() {
   const router = useRouter()
@@ -123,6 +124,10 @@ export default function Chat() {
         messages: newMessages,
         reasoning,
       })
+
+      if (response && newText) {
+        await convertTextToSpeechClient(response)
+      }
 
       // not awaiting for the response to save the user message
       // to avoid blocking the UI - FIRE AND FORGET
