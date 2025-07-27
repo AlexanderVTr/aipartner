@@ -24,7 +24,7 @@ export async function convertSpeechToText(audioFile: File) {
   return transcription
 }
 
-export async function convertTextToSpeech(text: string) {
+export async function convertTextToSpeechDirect(text: string) {
   try {
     const client = await elevenLabs()
 
@@ -54,12 +54,12 @@ export async function convertTextToSpeech(text: string) {
       offset += chunk.length
     }
 
-    // Convert to base64 for easy transfer
+    // Return as base64 for direct use
     const base64Audio = Buffer.from(audioBuffer).toString('base64')
 
     return { success: true, audioData: base64Audio }
   } catch (error) {
-    console.error('Error in convertTextToSpeech:', error)
+    console.error('Error in convertTextToSpeechDirect:', error)
     return { success: false, error }
   }
 }

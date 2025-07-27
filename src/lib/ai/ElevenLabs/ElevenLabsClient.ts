@@ -1,37 +1,40 @@
 'use client'
 
-import { convertTextToSpeech } from './ElevenLabs'
+import { convertTextToSpeechDirect } from './ElevenLabs'
 
-export async function convertTextToSpeechClient(text: string) {
+export async function playTextToSpeechDirect(text: string) {
   try {
     // Call server function
-    const result = await convertTextToSpeech(text)
+    const result = await convertTextToSpeechDirect(text)
 
     if (!result.success || !result.audioData) {
       throw new Error('Failed to generate speech')
     }
 
-    // Convert base64 to blob and play
-    const binaryString = atob(result.audioData)
-    const bytes = new Uint8Array(binaryString.length)
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i)
-    }
+    // Convert base64 to data URL
+    const dataUrl = `data:audio/mpeg;base64,${result.audioData}`
 
-    const audioBlob = new Blob([bytes], { type: 'audio/mpeg' })
-    const audioUrl = URL.createObjectURL(audioBlob)
+    // Use simple HTML5 Audio approach with data URL
+    const audio = new Audio()
+    audio.src = dataUrl
 
-    const audio = new Audio(audioUrl)
+    // Set audio properties for better playback
+    audio.preload = 'auto'
+    audio.volume = 1.0
+
+    // Wait for audio to be fully loaded
+    await new Promise((resolve, reject) => {
+      audio.oncanplaythrough = resolve
+      audio.onerror = reject
+      audio.load()
+    })
+
+    // Play audio
     await audio.play()
-
-    // Clean up the URL after playing
-    audio.onended = () => {
-      URL.revokeObjectURL(audioUrl)
-    }
 
     return { success: true }
   } catch (error) {
-    console.error('Error in convertTextToSpeechClient:', error)
+    console.error('Error in playTextToSpeechDirect:', error)
     return { success: false, error }
   }
 }
