@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Video, VideoOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, {
@@ -72,87 +72,54 @@ export default function VideoCallButton({
       console.log('Avatar initialized', avatarRef.current)
 
       avatarRef.current.on(StreamingEvents.STREAM_READY, (event) => {
-        console.log('STREAM_READY event fired:', event)
-        console.log('Event detail:', event.detail)
         setIsConnected(true)
         setIsConnecting(false)
-        console.log('Connection state updated: isConnected = true')
 
         if (videoRef.current && event.detail) {
           const stream = event.detail
-          console.log('Setting video stream:', stream)
-          console.log('Video element before setting stream:', videoRef.current)
-
           videoRef.current.srcObject = stream
-          console.log('Stream set to video element')
-
-          videoRef.current
-            .play()
-            .then(() => {
-              console.log('Video started playing successfully')
-            })
-            .catch((error) => {
-              console.error('Error playing video:', error)
-            })
-
-          // Add event listeners to debug video
-          videoRef.current.addEventListener('loadedmetadata', () => {
-            console.log('Video metadata loaded')
+          videoRef.current.play().catch((error) => {
+            console.error('Error playing video:', error)
           })
-
-          videoRef.current.addEventListener('canplay', () => {
-            console.log('Video can play')
-          })
-
-          videoRef.current.addEventListener('playing', () => {
-            console.log('Video is playing')
-          })
-
-          console.log('Video stream set successfully')
-        } else {
-          console.log('No videoRef or event.detail')
-          console.log('videoRef.current:', videoRef.current)
-          console.log('event.detail:', event.detail)
         }
       })
 
       avatarRef.current.on(StreamingEvents.STREAM_DISCONNECTED, () => {
-        console.log('Stream disconnected')
         setIsConnected(false)
         setIsConnecting(false)
       })
 
       avatarRef.current.on(StreamingEvents.AVATAR_START_TALKING, () => {
-        console.log('Avatar started talking')
+        // Avatar started talking
       })
 
       avatarRef.current.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
-        console.log('Avatar stopped talking')
+        // Avatar stopped talking
       })
 
       // Add correct event handlers from official demo
       avatarRef.current.on(StreamingEvents.USER_START, (event) => {
-        console.log('User started talking:', event)
+        // User started talking
       })
 
       avatarRef.current.on(StreamingEvents.USER_STOP, (event) => {
-        console.log('User stopped talking:', event)
+        // User stopped talking
       })
 
       avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, (event) => {
-        console.log('User end message:', event)
+        // User end message
       })
 
       avatarRef.current.on(StreamingEvents.USER_TALKING_MESSAGE, (event) => {
-        console.log('User talking message:', event)
+        // User talking message
       })
 
       avatarRef.current.on(StreamingEvents.AVATAR_TALKING_MESSAGE, (event) => {
-        console.log('Avatar talking message:', event)
+        // Avatar talking message
       })
 
       avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, (event) => {
-        console.log('Avatar end message:', event)
+        // Avatar end message
       })
     } catch (error) {
       console.error('Error initializing avatar:', error)
@@ -194,7 +161,7 @@ export default function VideoCallButton({
     }
   }
 
-  const onSendText = async (text: string) => {
+  const onSendText = useCallback(async (text: string) => {
     if (!avatarRef.current) return
 
     try {
@@ -205,11 +172,14 @@ export default function VideoCallButton({
       })
     } catch (error) {
       console.error('Error sending text:', error)
+      // In official demo, they don't handle 401 errors specially
+      // User needs to restart the session manually
     }
-  }
+  }, [])
 
   const handleVideoCallOn = async () => {
     try {
+      // Always get a fresh token for each session
       await getNewToken()
       setIsVideoCall(true)
 
@@ -235,6 +205,8 @@ export default function VideoCallButton({
   const handleVideoCallOff = () => {
     setIsVideoCall(false)
     onStopAvatar()
+    // Clear the token when stopping the session
+    setHeyGenToken(undefined)
   }
 
   const getNewToken = async () => {
@@ -266,10 +238,11 @@ export default function VideoCallButton({
   // Send pending message when connected
   useEffect(() => {
     if (isConnected && pendingMessage) {
-      onSendText(pendingMessage)
-      setPendingMessage(null)
+      const messageToSend = pendingMessage
+      setPendingMessage(null) // Clear immediately to prevent re-sending
+      onSendText(messageToSend)
     }
-  }, [isConnected, pendingMessage])
+  }, [isConnected, pendingMessage, onSendText])
 
   useEffect(() => {
     setIsClient(true)
