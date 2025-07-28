@@ -1,5 +1,6 @@
 'use client'
 
+import VideoCallButton from '../VideoCallButton/VideoCallButton'
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import { runAgent } from '@/lib/ai/langGraph/agent'
@@ -243,6 +244,10 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
+          <VideoCallButton
+            currentInput={input}
+            onMessageSend={handleSendMessage}
+          />
           <SpeechToTextAdvancedButton
             currentInput={input}
             onMessageSend={handleSendMessage}
