@@ -18,7 +18,6 @@ export default function VideoCallButton() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [heyGenToken, setHeyGenToken] = useState<string | undefined>(undefined)
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
-  const [isClient, setIsClient] = useState(false)
 
   // AVATAR INITIALIZATION
   const onInitAvatar = async () => {
@@ -190,10 +189,6 @@ export default function VideoCallButton() {
   }, [isConnected, pendingMessage, onSendText])
 
   useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  useEffect(() => {
     return () => {
       if (avatarRef.current) {
         onStopAvatar()
@@ -212,15 +207,13 @@ export default function VideoCallButton() {
       {isVideoCall && (
         <div className={styles.callFrame}>
           <div className={styles.videoContainer}>
-            {isClient && (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                controls={false}
-                className={styles.avatarVideo}
-              />
-            )}
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              controls={false}
+              className={styles.avatarVideo}
+            />
           </div>
           <div className={styles.callFrameActions}>
             <div className={styles.connectionStatus}>
