@@ -109,6 +109,34 @@ export function useVoiceRecorder() {
     [analyzeAudio],
   )
 
+  const cleanup = useCallback(() => {
+    isRecordingRef.current = false
+
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current)
+      silenceTimeoutRef.current = null
+    }
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = null
+    }
+
+    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+      audioContextRef.current.close()
+    }
+    audioContextRef.current = null
+    analyserRef.current = null
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop()
+      })
+      streamRef.current = null
+    }
+    onSilenceDetectedRef.current = null
+  }, [])
+
   const stopRecording = useCallback(() => {
     return new Promise<Blob>((resolve, reject) => {
       if (mediaRecorderRef.current && isRecordingRef.current) {
@@ -162,34 +190,6 @@ export function useVoiceRecorder() {
 
   const createAudioFile = useCallback((blob: Blob) => {
     return new File([blob], 'recording.webm', { type: 'audio/webm' })
-  }, [])
-
-  const cleanup = useCallback(() => {
-    isRecordingRef.current = false
-
-    if (silenceTimeoutRef.current) {
-      clearTimeout(silenceTimeoutRef.current)
-      silenceTimeoutRef.current = null
-    }
-
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current)
-      animationFrameRef.current = null
-    }
-
-    if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
-      audioContextRef.current.close()
-    }
-    audioContextRef.current = null
-    analyserRef.current = null
-
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => {
-        track.stop()
-      })
-      streamRef.current = null
-    }
-    onSilenceDetectedRef.current = null
   }, [])
 
   return {

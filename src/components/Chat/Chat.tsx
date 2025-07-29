@@ -244,10 +244,7 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
-          <VideoCallButton
-            currentInput={input}
-            onMessageSend={handleSendMessage}
-          />
+          <VideoCallButton />
           <SpeechToTextAdvancedButton
             currentInput={input}
             onMessageSend={handleSendMessage}

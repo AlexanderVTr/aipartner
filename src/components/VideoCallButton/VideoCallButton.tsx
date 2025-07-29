@@ -3,26 +3,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Video, VideoOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, {
-  AvatarQuality,
-  StartAvatarRequest,
-  VoiceChatTransport,
-  VoiceEmotion,
-  ElevenLabsModel,
-  STTProvider,
   StreamingEvents,
   TaskMode,
   TaskType,
 } from '@heygen/streaming-avatar'
+import { avatarConfig } from '@/lib/ai/HeyGen/avatarConfig'
+import { getToken } from '@/lib/ai/HeyGen/getToken'
 
-interface VideoCallButtonProps {
-  currentInput: string
-  onMessageSend: (newText: string) => void
-}
-
-export default function VideoCallButton({
-  currentInput,
-  onMessageSend,
-}: VideoCallButtonProps) {
+export default function VideoCallButton() {
   const [isVideoCall, setIsVideoCall] = useState(false)
   const avatarRef = useRef<StreamingAvatar | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
@@ -31,22 +19,6 @@ export default function VideoCallButton({
   const [heyGenToken, setHeyGenToken] = useState<string | undefined>(undefined)
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
   const [isClient, setIsClient] = useState(false)
-
-  const avatarConfig: StartAvatarRequest = {
-    quality: AvatarQuality.Low,
-    avatarName: 'Ann_Therapist_public', // Публичный аватар
-    voice: {
-      rate: 1.0,
-      emotion: VoiceEmotion.EXCITED,
-      model: ElevenLabsModel.eleven_flash_v2_5,
-    },
-    //TODO: Add languages here
-    language: 'en',
-    voiceChatTransport: VoiceChatTransport.WEBSOCKET,
-    sttSettings: {
-      provider: STTProvider.DEEPGRAM,
-    },
-  }
 
   // AVATAR INITIALIZATION
   const onInitAvatar = async () => {
@@ -98,27 +70,27 @@ export default function VideoCallButton({
       })
 
       // Add correct event handlers from official demo
-      avatarRef.current.on(StreamingEvents.USER_START, (event) => {
+      avatarRef.current.on(StreamingEvents.USER_START, () => {
         // User started talking
       })
 
-      avatarRef.current.on(StreamingEvents.USER_STOP, (event) => {
+      avatarRef.current.on(StreamingEvents.USER_STOP, () => {
         // User stopped talking
       })
 
-      avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, (event) => {
+      avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, () => {
         // User end message
       })
 
-      avatarRef.current.on(StreamingEvents.USER_TALKING_MESSAGE, (event) => {
+      avatarRef.current.on(StreamingEvents.USER_TALKING_MESSAGE, () => {
         // User talking message
       })
 
-      avatarRef.current.on(StreamingEvents.AVATAR_TALKING_MESSAGE, (event) => {
+      avatarRef.current.on(StreamingEvents.AVATAR_TALKING_MESSAGE, () => {
         // Avatar talking message
       })
 
-      avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, (event) => {
+      avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, () => {
         // Avatar end message
       })
     } catch (error) {
@@ -128,11 +100,6 @@ export default function VideoCallButton({
 
   // AVATAR START
   const onStartAvatar = async () => {
-    console.log(
-      'onStartAvatar called, avatarRef.current:',
-      avatarRef.current ? 'exists' : 'null',
-    )
-
     if (!avatarRef.current) {
       console.log('No avatar reference, returning')
       return
@@ -141,7 +108,6 @@ export default function VideoCallButton({
     try {
       console.log('Setting isConnecting to true')
       setIsConnecting(true)
-      console.log('Calling createStartAvatar with config:', avatarConfig)
       await avatarRef.current.createStartAvatar(avatarConfig)
       console.log('Avatar started successfully', avatarRef.current)
     } catch (error) {
@@ -172,15 +138,14 @@ export default function VideoCallButton({
       })
     } catch (error) {
       console.error('Error sending text:', error)
-      // In official demo, they don't handle 401 errors specially
-      // User needs to restart the session manually
     }
   }, [])
 
   const handleVideoCallOn = async () => {
     try {
       // Always get a fresh token for each session
-      await getNewToken()
+      const newToken = await getToken()
+      setHeyGenToken(newToken)
       setIsVideoCall(true)
 
       // Wait for avatar to be initialized
@@ -207,26 +172,6 @@ export default function VideoCallButton({
     onStopAvatar()
     // Clear the token when stopping the session
     setHeyGenToken(undefined)
-  }
-
-  const getNewToken = async () => {
-    try {
-      const response = await fetch('/api/heygen/token', {
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        throw new Error('Failed to get token')
-      }
-
-      const data = await response.json()
-      const newToken = data.token
-      setHeyGenToken(newToken)
-      return newToken
-    } catch (error) {
-      console.error('Error getting HeyGen token:', error)
-      throw error
-    }
   }
 
   useEffect(() => {
