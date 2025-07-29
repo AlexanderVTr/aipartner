@@ -1,12 +1,8 @@
 'use client'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
-import StreamingAvatar, {
-  StreamingEvents,
-  TaskMode,
-  TaskType,
-} from '@heygen/streaming-avatar'
+import StreamingAvatar, { StreamingEvents } from '@heygen/streaming-avatar'
 import { avatarConfig } from '@/lib/ai/HeyGen/avatarConfig'
 import { getToken } from '@/lib/ai/HeyGen/getToken'
 
@@ -17,31 +13,19 @@ export default function VideoCallButton() {
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [heyGenToken, setHeyGenToken] = useState<string | undefined>(undefined)
-  const [pendingMessage, setPendingMessage] = useState<string | null>(null)
   const [isVoiceChatActive, setIsVoiceChatActive] = useState(false)
 
   // AVATAR INITIALIZATION
   const onInitAvatar = async () => {
-    console.log(
-      'onInitAvatar called, heyGenToken:',
-      heyGenToken ? 'exists' : 'missing',
-    )
-
     if (!heyGenToken) {
-      console.log('No token, returning')
       return
     }
 
     try {
-      console.log(
-        'Creating StreamingAvatar with token and basePath:',
-        process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN,
-      )
       avatarRef.current = new StreamingAvatar({
         token: heyGenToken,
         basePath: process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN,
       })
-      console.log('Avatar initialized', avatarRef.current)
 
       avatarRef.current.on(StreamingEvents.STREAM_READY, (event) => {
         setIsConnected(true)
@@ -102,13 +86,9 @@ export default function VideoCallButton() {
 
   // AVATAR START
   const onStartAvatar = async () => {
-    if (!avatarRef.current) {
-      console.log('No avatar reference, returning')
-      return
-    }
+    if (!avatarRef.current) return
 
     try {
-      console.log('Setting isConnecting to true')
       setIsConnecting(true)
       await avatarRef.current.createStartAvatar(avatarConfig)
       console.log('Avatar started successfully', avatarRef.current)
@@ -134,20 +114,6 @@ export default function VideoCallButton() {
     }
   }
 
-  const onSendText = useCallback(async (text: string) => {
-    if (!avatarRef.current) return
-
-    try {
-      await avatarRef.current.speak({
-        text,
-        taskType: TaskType.TALK,
-        taskMode: TaskMode.ASYNC,
-      })
-    } catch (error) {
-      console.error('Error sending text:', error)
-    }
-  }, [])
-
   const handleVideoCallOn = async () => {
     try {
       // Always get a fresh token for each session
@@ -168,7 +134,6 @@ export default function VideoCallButton() {
       })
 
       await onStartAvatar()
-      setPendingMessage('Hello')
     } catch (error) {
       console.error('Error in handleVideoCallOn:', error)
     }
@@ -186,15 +151,6 @@ export default function VideoCallButton() {
       onInitAvatar()
     }
   }, [heyGenToken])
-
-  // Send pending message when connected
-  useEffect(() => {
-    if (isConnected && pendingMessage) {
-      const messageToSend = pendingMessage
-      setPendingMessage(null) // Clear immediately to prevent re-sending
-      onSendText(messageToSend)
-    }
-  }, [isConnected, pendingMessage, onSendText])
 
   useEffect(() => {
     return () => {
