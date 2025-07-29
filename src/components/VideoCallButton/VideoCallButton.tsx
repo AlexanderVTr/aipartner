@@ -1,6 +1,6 @@
 'use client'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Video, VideoOff } from 'lucide-react'
+import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, {
   StreamingEvents,
@@ -18,6 +18,7 @@ export default function VideoCallButton() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [heyGenToken, setHeyGenToken] = useState<string | undefined>(undefined)
   const [pendingMessage, setPendingMessage] = useState<string | null>(null)
+  const [isVoiceChatActive, setIsVoiceChatActive] = useState(false)
 
   // AVATAR INITIALIZATION
   const onInitAvatar = async () => {
@@ -68,29 +69,31 @@ export default function VideoCallButton() {
         // Avatar stopped talking
       })
 
-      // Add correct event handlers from official demo
-      avatarRef.current.on(StreamingEvents.USER_START, () => {
-        // User started talking
-      })
-
-      avatarRef.current.on(StreamingEvents.USER_STOP, () => {
-        // User stopped talking
-      })
-
-      avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, () => {
-        // User end message
-      })
-
-      avatarRef.current.on(StreamingEvents.USER_TALKING_MESSAGE, () => {
-        // User talking message
-      })
-
       avatarRef.current.on(StreamingEvents.AVATAR_TALKING_MESSAGE, () => {
         // Avatar talking message
       })
 
       avatarRef.current.on(StreamingEvents.AVATAR_END_MESSAGE, () => {
         // Avatar end message
+      })
+
+      // Voice chat events
+      avatarRef.current.on(StreamingEvents.USER_START, () => {
+        console.log('User started talking')
+        setIsVoiceChatActive(true)
+      })
+
+      avatarRef.current.on(StreamingEvents.USER_STOP, () => {
+        console.log('User stopped talking')
+        setIsVoiceChatActive(false)
+      })
+
+      avatarRef.current.on(StreamingEvents.USER_TALKING_MESSAGE, (message) => {
+        console.log('User talking message:', message)
+      })
+
+      avatarRef.current.on(StreamingEvents.USER_END_MESSAGE, (message) => {
+        console.log('User end message:', message)
       })
     } catch (error) {
       console.error('Error initializing avatar:', error)
@@ -109,6 +112,10 @@ export default function VideoCallButton() {
       setIsConnecting(true)
       await avatarRef.current.createStartAvatar(avatarConfig)
       console.log('Avatar started successfully', avatarRef.current)
+
+      // Start voice chat after avatar is started
+      await avatarRef.current.startVoiceChat()
+      console.log('Voice chat started')
     } catch (error) {
       console.error('Error starting avatar:', error)
       setIsConnecting(false)
@@ -233,6 +240,22 @@ export default function VideoCallButton() {
                     : 'Disconnected'}
               </div>
             </div>
+            <button
+              className={`${styles.button} ${isVoiceChatActive ? styles.buttonOn : ''}`}
+              onClick={() => {
+                if (avatarRef.current && isConnected) {
+                  if (isVoiceChatActive) {
+                    avatarRef.current.closeVoiceChat()
+                    setIsVoiceChatActive(false)
+                  } else {
+                    avatarRef.current.startVoiceChat()
+                    setIsVoiceChatActive(true)
+                  }
+                }
+              }}
+              disabled={!isConnected}>
+              {isVoiceChatActive ? <MicOff size={18} /> : <Mic size={18} />}
+            </button>
             <button
               className={`${styles.button}`}
               onClick={() => handleVideoCallOff()}>

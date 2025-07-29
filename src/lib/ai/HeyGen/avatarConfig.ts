@@ -8,12 +8,12 @@ import {
 } from '@heygen/streaming-avatar'
 
 export const avatarConfig: StartAvatarRequest = {
-  quality: AvatarQuality.Low,
-  avatarName: 'Ann_Therapist_public', // Avatar ID
+  quality: AvatarQuality.High,
+  avatarName: 'Elenora_FitnessCoach_public', // Avatar ID
   voice: {
     rate: 1.0,
     emotion: VoiceEmotion.EXCITED,
-    model: ElevenLabsModel.eleven_flash_v2_5,
+    model: ElevenLabsModel.eleven_multilingual_v2,
   },
   //TODO: Add languages here
   language: 'en',
