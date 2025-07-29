@@ -1,6 +1,5 @@
 'use client'
 
-import VideoCallButton from '../VideoCallButton/VideoCallButton'
 import Header from '@/components/Header/Header'
 import { Button } from '@/components/UI'
 import { runAgent } from '@/lib/ai/langGraph/agent'
@@ -20,9 +19,8 @@ import { useTokens } from '@/contexts/TokensContext'
 import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
-import SpeechToTextSimpleButton from '../SpeechToTextSimpleButton/SpeechToTextSimpleButton'
-import SpeechToTextAdvancedButton from '../SpeechToTextAdvancedButton/SpeechToTextAdvancedButton'
-import { playTextToSpeechDirect } from '@/lib/ai/ElevenLabs/ElevenLabsClient'
+import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
+import VideoCallButton from '@/components/VideoCallButton/VideoCallButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -89,28 +87,17 @@ export default function Chat() {
   }
 
   // SEND MESSAGE FUNCTION
-  const handleSendMessage = async (
-    newText?: string,
-    reasoning?: { effort: 'low' | 'high' },
-  ) => {
-    // Use newText if provided (from voice), otherwise use input
-    const textToSend = newText || input
-
-    if (!textToSend.trim() || isLoading) return
+  const handleSendMessage = async (reasoning?: { effort: 'low' | 'high' }) => {
+    if (!input.trim() || isLoading) return
 
     if (tokens === 0) {
       router.push('/pricing')
       return
     }
 
-    // Set input to newText if provided (for voice messages)
-    if (newText) {
-      setInput(newText)
-    }
-
     const userMessage = {
       role: CHAT_ROLES.USER,
-      content: textToSend.trim(),
+      content: input.trim(),
       created_at: new Date().toISOString(),
     }
 
@@ -125,10 +112,6 @@ export default function Chat() {
         messages: newMessages,
         reasoning,
       })
-
-      if (response && newText) {
-        await playTextToSpeechDirect(response)
-      }
 
       // not awaiting for the response to save the user message
       // to avoid blocking the UI - FIRE AND FORGET
@@ -245,10 +228,10 @@ export default function Chat() {
         />
         <div className={styles.actions}>
           <VideoCallButton />
-          <SpeechToTextAdvancedButton
+          {/* <SpeechToTextAdvancedButton
             currentInput={input}
             onMessageSend={handleSendMessage}
-          />
+          /> */}
           <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
           <Button
             onClick={handleSendMessage}
