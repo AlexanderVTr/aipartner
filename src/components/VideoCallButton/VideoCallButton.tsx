@@ -121,6 +121,7 @@ export default function VideoCallButton() {
     try {
       await avatarRef.current.stopAvatar()
       setIsConnecting(false)
+      avatarRef.current = null // Clear the avatar reference
     } catch (error) {
       console.error('Error stopping avatar:', error)
     }
