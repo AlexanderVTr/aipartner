@@ -6,6 +6,7 @@ import {
   VoiceChatTransport,
   VoiceEmotion,
 } from '@heygen/streaming-avatar'
+import { SYSTEM_PROMPT } from '@/lib/ai/prompt'
 
 export const avatarConfig: StartAvatarRequest = {
   quality: AvatarQuality.High,
@@ -15,10 +16,12 @@ export const avatarConfig: StartAvatarRequest = {
     emotion: VoiceEmotion.EXCITED,
     model: ElevenLabsModel.eleven_multilingual_v2,
   },
-  //TODO: Add languages here
+  //TODO: It's may be will be better if user can select language can be ''-auto detect
   language: 'en',
   voiceChatTransport: VoiceChatTransport.WEBSOCKET,
   sttSettings: {
     provider: STTProvider.DEEPGRAM,
   },
+  // Add Aisha's personality and knowledge
+  knowledgeBase: SYSTEM_PROMPT,
 }
