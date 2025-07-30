@@ -63,23 +63,3 @@
   gap: 10px;
   padding: 4px;
 }
-
-.connectionStatus {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-color);
-}
-
-.connected {
-  background-color: #008000;
-}
-
-.connecting {
-  background-color: #ffa500;
-}
-
-.disconnected {
-  background-color: #ff0000;
-}

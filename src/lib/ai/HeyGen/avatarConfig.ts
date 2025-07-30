@@ -13,11 +13,11 @@ export const avatarConfig: StartAvatarRequest = {
   avatarName: 'Elenora_FitnessCoach_public', // Avatar ID
   voice: {
     rate: 1.0,
-    emotion: VoiceEmotion.EXCITED,
+    emotion: VoiceEmotion.SOOTHING,
     model: ElevenLabsModel.eleven_multilingual_v2,
   },
   //TODO: It's may be will be better if user can select language can be ''-auto detect
-  language: '',
+  language: 'en',
   voiceChatTransport: VoiceChatTransport.WEBSOCKET,
   sttSettings: {
     provider: STTProvider.DEEPGRAM,

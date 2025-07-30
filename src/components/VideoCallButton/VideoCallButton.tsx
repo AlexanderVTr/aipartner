@@ -5,6 +5,7 @@ import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, { StreamingEvents } from '@heygen/streaming-avatar'
 import { avatarConfig } from '@/lib/ai/HeyGen/avatarConfig'
 import { getToken } from '@/lib/ai/HeyGen/getToken'
+import VideoCallStatus from '@/components/UI/VideoCallStatus/VideoCallStatus'
 
 export default function VideoCallButton() {
   const [isVideoCall, setIsVideoCall] = useState(false)
@@ -148,6 +149,7 @@ export default function VideoCallButton() {
 
   useEffect(() => {
     if (heyGenToken) {
+      //TODO: Uncomment this after updates
       onInitAvatar()
     }
   }, [heyGenToken])
@@ -178,25 +180,14 @@ export default function VideoCallButton() {
               controls={false}
               className={styles.avatarVideo}
             />
+            <VideoCallStatus
+              isConnected={isConnected}
+              isConnecting={isConnecting}
+            />
           </div>
           <div className={styles.callFrameActions}>
-            <div className={styles.connectionStatus}>
-              <div
-                className={`${
-                  isConnected
-                    ? styles.connected
-                    : isConnecting
-                      ? styles.connecting
-                      : styles.disconnected
-                }`}>
-                {isConnected
-                  ? 'Connected'
-                  : isConnecting
-                    ? 'Connecting...'
-                    : 'Disconnected'}
-              </div>
-            </div>
             <button
+              disabled={!isConnected}
               className={`${styles.button} ${isVoiceChatActive ? styles.buttonOn : ''}`}
               onClick={() => {
                 if (avatarRef.current && isConnected) {
@@ -208,8 +199,7 @@ export default function VideoCallButton() {
                     setIsVoiceChatActive(true)
                   }
                 }
-              }}
-              disabled={!isConnected}>
+              }}>
               {isVoiceChatActive ? <MicOff size={18} /> : <Mic size={18} />}
             </button>
             <button
