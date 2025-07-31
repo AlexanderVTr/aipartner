@@ -19,7 +19,7 @@ import { useTokens } from '@/contexts/TokensContext'
 import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
-import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
+// import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
 import VideoCallButton from '@/components/VideoCallButton/VideoCallButton'
 
 export default function Chat() {
@@ -232,7 +232,7 @@ export default function Chat() {
             currentInput={input}
             onMessageSend={handleSendMessage}
           /> */}
-          <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
+          {/* <SpeechToTextSimpleButton currentInput={input} setInput={setInput} /> */}
           <Button
             onClick={handleSendMessage}
             variant='round'
