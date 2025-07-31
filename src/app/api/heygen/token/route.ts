@@ -5,7 +5,6 @@ const BASE_API_URL =
   process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN || 'https://api.heygen.ai/v1'
 
 export async function POST(request: NextRequest) {
-  console.log(request)
   if (!HEYGEN_API_KEY) {
     return NextResponse.json(
       { error: 'HEYGEN_API_KEY is not configured' },
