@@ -6,6 +6,7 @@ This is a [Next.js](https://nextjs.org) project with AI chat capabilities, built
 
 - 🤖 AI Chat with LangGraph integration
 - 🎤 Speech-to-text voice input
+- Video chat with HeyGen Integration
 - 👤 User authentication with Clerk
 - 🗄️ Vector database with Supabase
 - 🎯 Token-based usage system
