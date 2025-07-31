@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0](https://github.com-alexandervtr/AlexanderVTr/aipartner/compare/v1.1.0...v2.0.0) (2025-07-31)
+
+
+### 📚 Documentation
+
+* fix duplicate entry in CHANGELOG ([44f5965](https://github.com-alexandervtr/AlexanderVTr/aipartner/commit/44f5965fb866a32f5ea54d6cabccfe428a706639))
+
 ## 1.1.0 (2025-07-25)
 
 ### ✨ Features
