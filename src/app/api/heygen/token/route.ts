@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
 const BASE_API_URL =
   process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN || 'https://api.heygen.ai/v1'
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   if (!HEYGEN_API_KEY) {
     return NextResponse.json(
       { error: 'HEYGEN_API_KEY is not configured' },
