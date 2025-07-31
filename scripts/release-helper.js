@@ -13,7 +13,7 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// Предустановленные темы релизов
+// Predefined release themes
 const RELEASE_THEMES = {
   'speech': '🎤 Speech Recognition & Voice Features',
   'ai': '🤖 AI Chat & Intelligence Updates', 
@@ -90,7 +90,7 @@ async function main() {
   const suggestedTheme = suggestTheme(commits);
   console.log(`💡 Suggested theme: ${RELEASE_THEMES[suggestedTheme]}\n`);
   
-  // Выбор типа релиза
+  // Choose release type
   console.log('📋 Available release types:');
   console.log('1. patch (0.1.0 → 0.1.1) - Bug fixes');
   console.log('2. minor (0.1.0 → 0.2.0) - New features');
@@ -100,7 +100,7 @@ async function main() {
   const typeMap = { '1': 'patch', '2': 'minor', '3': 'major' };
   const selectedType = typeMap[releaseType] || 'patch';
   
-  // Выбор темы
+  // Choose theme
   console.log('\n🎨 Available themes:');
   Object.entries(RELEASE_THEMES).forEach(([key, theme], index) => {
     const marker = key === suggestedTheme ? ' (suggested)' : '';
@@ -118,10 +118,10 @@ async function main() {
     selectedTheme = themeKeys.find(key => key === themeChoice.toLowerCase()) || suggestedTheme;
   }
   
-  // Кастомное название (опционально)
+  // Custom name (optional)
   const customName = await askQuestion('\n✏️ Custom release name (press Enter to use theme): ');
   
-  // Предварительный просмотр
+  // Preview release
   console.log('\n📋 Release Preview:');
   console.log(`Type: ${selectedType}`);
   console.log(`Theme: ${RELEASE_THEMES[selectedTheme]}`);
@@ -133,13 +133,37 @@ async function main() {
   
   if (confirm.toLowerCase() === 'y' || confirm.toLowerCase() === 'yes') {
     try {
-      // Создаем релиз
+      // Create release
       console.log(`\n🚀 Creating ${selectedType} release...`);
       execSync(`pnpm release:${selectedType}`, { stdio: 'inherit' });
       
-      // Если есть кастомное название, можно обновить тег
+      // If custom name provided, update CHANGELOG.md
       if (customName) {
-        console.log('💡 Custom names will be applied by GitHub Actions');
+        console.log('📝 Updating CHANGELOG.md with custom title...');
+        try {
+          const fs = require('fs');
+          let changelog = fs.readFileSync('CHANGELOG.md', 'utf8');
+          
+          // Find the latest version section and add custom title
+          const versionRegex = /^## \[(\d+\.\d+\.\d+)\]/m;
+          const match = changelog.match(versionRegex);
+          
+          if (match) {
+            const version = match[1];
+            const customTitle = `\n🎯 **${customName}**\n`;
+            
+            // Insert custom title after the version line
+            changelog = changelog.replace(
+              `## [${version}]`,
+              `## [${version}]\n${customTitle}`
+            );
+            
+            fs.writeFileSync('CHANGELOG.md', changelog);
+            console.log('✅ CHANGELOG.md updated with custom title');
+          }
+        } catch (error) {
+          console.log('⚠️ Could not update CHANGELOG.md automatically');
+        }
       }
       
       console.log('\n✅ Release created successfully!');
