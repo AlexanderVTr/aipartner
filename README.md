@@ -42,6 +42,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `pnpm release:minor` - Create minor release (new features) 
 - `pnpm release:major` - Create major release (breaking changes)
 - `pnpm release:dry` - Preview release changes
+- `pnpm release:custom` - Create custom release
 
 ## 📚 Documentation
 
