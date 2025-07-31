@@ -19,7 +19,8 @@ import { useTokens } from '@/contexts/TokensContext'
 import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
-import SpeechToTextSimpleButton from '../SpeechToTextSimpleButton/SpeechToTextSimpleButton'
+import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
+import VideoCallButton from '@/components/VideoCallButton/VideoCallButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -226,6 +227,11 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
+          <VideoCallButton />
+          {/* <SpeechToTextAdvancedButton
+            currentInput={input}
+            onMessageSend={handleSendMessage}
+          /> */}
           <SpeechToTextSimpleButton currentInput={input} setInput={setInput} />
           <Button
             onClick={handleSendMessage}
