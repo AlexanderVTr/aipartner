@@ -6,15 +6,27 @@ import StreamingAvatar, { StreamingEvents } from '@heygen/streaming-avatar'
 import { avatarConfig } from '@/lib/ai/HeyGen/avatarConfig'
 import { getToken } from '@/lib/ai/HeyGen/getToken'
 import VideoCallStatus from '@/components/UI/VideoCallStatus/VideoCallStatus'
+import { useTokens } from '@/contexts/TokensContext'
+import Tooltip from '../UI/Tooltip/Tooltip'
+import { TOOLTIP_CONTENT } from '@/constants/chat'
 
 export default function VideoCallButton() {
   const [isVideoCall, setIsVideoCall] = useState(false)
+  const [isVideoCallDisabled, setIsVideoCallDisabled] = useState(true)
   const avatarRef = useRef<StreamingAvatar | null>(null)
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [heyGenToken, setHeyGenToken] = useState<string | undefined>(undefined)
   const [isVoiceChatActive, setIsVoiceChatActive] = useState(false)
+
+  const { tokens } = useTokens()
+
+  useEffect(() => {
+    if (tokens > 101) {
+      setIsVideoCallDisabled(false)
+    }
+  }, [tokens])
 
   // AVATAR INITIALIZATION
   const onInitAvatar = async () => {
@@ -164,12 +176,17 @@ export default function VideoCallButton() {
 
   return (
     <>
-      <button
-        className={`${styles.button} ${isVideoCall ? styles.buttonOn : ''}`}
-        disabled={isVideoCall}
-        onClick={handleVideoCallOn}>
-        <Video size={18} />
-      </button>
+      <Tooltip
+        content={TOOLTIP_CONTENT.VIDEO_CALL_DISABLED}
+        show={isVideoCallDisabled}
+        position='top'>
+        <button
+          className={`${styles.button} ${isVideoCall ? styles.buttonOn : ''}`}
+          disabled={isVideoCallDisabled}
+          onClick={handleVideoCallOn}>
+          <Video size={18} />
+        </button>
+      </Tooltip>
       {isVideoCall && (
         <div className={styles.callFrame}>
           <div className={styles.videoContainer}>

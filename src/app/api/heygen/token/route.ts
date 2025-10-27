@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 
 const HEYGEN_API_KEY = process.env.HEYGEN_API_KEY
-const BASE_API_URL =
-  process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN || 'https://api.heygen.ai/v1'
+const BASE_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL_HEYGEN
 
 export async function POST() {
   if (!HEYGEN_API_KEY) {

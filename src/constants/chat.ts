@@ -39,3 +39,7 @@ export const TOKENS_PER_PLAN = {
 export const PER_PAGE = 20
 export const SILENCE_THRESHOLD = 10
 export const SILENCE_DURATION = 3000 // 3000ms
+
+export const TOOLTIP_CONTENT = {
+  VIDEO_CALL_DISABLED: 'You need at least 102 tokens to use this feature.',
+} as const
