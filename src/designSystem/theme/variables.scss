@@ -84,11 +84,13 @@ $border-radius-2-extra-large: $border-radius-2xl;
 
 // ===== SIZING =====
 // Button sizing
+$button-height-xs: 18px;
 $button-height-sm: 32px;
 $button-height-md: 40px;
 $button-height-lg: 48px;
 $button-height-xl: 56px;
 
+$button-padding-xs: 0 8px;
 $button-padding-sm: 0 12px;
 $button-padding-md: 0 16px;
 $button-padding-lg: 0 20px;

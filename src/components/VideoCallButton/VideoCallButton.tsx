@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, { StreamingEvents } from '@heygen/streaming-avatar'
@@ -9,6 +9,8 @@ import VideoCallStatus from '@/components/UI/VideoCallStatus/VideoCallStatus'
 import { useTokens } from '@/contexts/TokensContext'
 import Tooltip from '../UI/Tooltip/Tooltip'
 import { TOOLTIP_CONTENT } from '@/constants/chat'
+import { useRouter } from 'next/navigation'
+import { Button } from '../UI'
 
 export default function VideoCallButton() {
   const [isVideoCall, setIsVideoCall] = useState(false)
@@ -21,6 +23,7 @@ export default function VideoCallButton() {
   const [isVoiceChatActive, setIsVoiceChatActive] = useState(false)
 
   const { tokens } = useTokens()
+  const router = useRouter()
 
   useEffect(() => {
     if (tokens > 101) {
@@ -174,10 +177,23 @@ export default function VideoCallButton() {
     }
   }, [])
 
+  const tooltipContent = useMemo(() => {
+    return (
+      <>
+        {TOOLTIP_CONTENT.VIDEO_CALL_DISABLED}
+        <Button
+          variant='secondary'
+          size='xs'
+          onClick={() => router.push('/pricing')}>
+          Upgrade plan
+        </Button>
+      </>
+    )
+  }, [router])
   return (
     <>
       <Tooltip
-        content={TOOLTIP_CONTENT.VIDEO_CALL_DISABLED}
+        content={tooltipContent}
         show={isVideoCallDisabled}
         position='top'>
         <button

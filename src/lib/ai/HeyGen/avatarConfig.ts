@@ -17,6 +17,7 @@ export const avatarConfig: StartAvatarRequest = {
     model: ElevenLabsModel.eleven_multilingual_v2,
   },
   //TODO: It's may be will be better if user can select language can be ''-auto detect
+  // getCurrentLocale() from useLocalization hook
   language: 'en',
   voiceChatTransport: VoiceChatTransport.WEBSOCKET,
   sttSettings: {

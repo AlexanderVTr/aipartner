@@ -3,6 +3,7 @@ import styles from './Button.module.scss'
 interface ButtonProps {
   children: React.ReactNode
   variant?: 'primary' | 'secondary' | 'round'
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
   href?: string
   target?: string
   rel?: string
@@ -14,6 +15,7 @@ interface ButtonProps {
 export default function Button({
   children,
   variant = 'primary',
+  size = 'lg',
   href,
   target,
   rel,
@@ -21,7 +23,7 @@ export default function Button({
   onClick,
   disabled,
 }: ButtonProps) {
-  const buttonClass = `${styles.button} ${styles[variant]} ${className || ''}`
+  const buttonClass = `${styles.button} ${styles[variant]} ${styles[`size-${size}`]} ${className || ''}`
 
   if (href) {
     return (

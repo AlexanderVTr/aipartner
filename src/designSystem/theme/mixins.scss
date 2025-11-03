@@ -168,7 +168,11 @@
 }
 
 @mixin button-size($size: 'md') {
-  @if $size == 'sm' {
+  @if $size == 'xs' {
+    height: $button-height-xs;
+    padding: $button-padding-xs;
+    font-size: $font-size-xs;
+  } @else if $size == 'sm' {
     height: $button-height-sm;
     padding: $button-padding-sm;
     font-size: $font-size-sm;

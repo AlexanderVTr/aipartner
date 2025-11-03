@@ -3,10 +3,32 @@
 
 .button {
   @include button-base;
-  @include button-size('lg');
   min-width: $button-min-width;
   gap: $button-gap;
   line-height: $line-height-normal;
+}
+
+.size-xs {
+  @include button-size('xs');
+  min-width: auto;
+}
+
+.size-sm {
+  @include button-size('sm');
+  min-width: auto;
+}
+
+.size-md {
+  @include button-size('md');
+  min-width: auto;
+}
+
+.size-lg {
+  @include button-size('lg');
+}
+
+.size-xl {
+  @include button-size('xl');
 }
 
 .primary {
@@ -76,6 +98,10 @@
 // Mobile styles
 @include mobile-only {
   .button {
+    min-width: auto;
+  }
+
+  .size-lg {
     @include button-size('md');
   }
 
