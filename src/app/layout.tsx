@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <ClerkProvider clerkJSVersion='6.20.2'>
+    <ClerkProvider>
       <html lang='en'>
         <body className={`${robotoFlex.variable} ${firaSans.variable}`}>
           {children}
