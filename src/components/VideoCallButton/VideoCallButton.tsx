@@ -11,6 +11,7 @@ import Tooltip from '../UI/Tooltip/Tooltip'
 import { TOOLTIP_CONTENT } from '@/constants/chat'
 import { useRouter } from 'next/navigation'
 import { Button } from '../UI'
+import { checkMicrophoneAccess } from '@/helpers/helpers'
 
 export default function VideoCallButton() {
   const [isVideoCall, setIsVideoCall] = useState(false)
@@ -109,12 +110,21 @@ export default function VideoCallButton() {
       await avatarRef.current.createStartAvatar(avatarConfig)
       console.log('Avatar started successfully', avatarRef.current)
 
+      // Check microphone access before starting voice chat
+      const hasAccess = await checkMicrophoneAccess()
+      if (!hasAccess) {
+        throw new Error('Cannot start voice chat without media devices')
+      }
+
       // Start voice chat after avatar is started
       await avatarRef.current.startVoiceChat()
       console.log('Voice chat started')
     } catch (error) {
       console.error('Error starting avatar:', error)
       setIsConnecting(false)
+      if (error instanceof Error && error.message.includes('media devices')) {
+        alert('Please allow microphone access to use voice chat')
+      }
     }
   }
 
@@ -160,6 +170,29 @@ export default function VideoCallButton() {
     onStopAvatar()
     // Clear the token when stopping the session
     setHeyGenToken(undefined)
+  }
+
+  const handleMicrophoneSwitch = async () => {
+    if (!avatarRef.current || !isConnected) return
+
+    if (isVoiceChatActive) {
+      avatarRef.current.closeVoiceChat()
+      setIsVoiceChatActive(false)
+    } else {
+      try {
+        const hasAccess = await checkMicrophoneAccess()
+        if (!hasAccess) {
+          alert('Cannot start voice chat without microphone access')
+          return
+        }
+
+        await avatarRef.current.startVoiceChat()
+        setIsVoiceChatActive(true)
+      } catch (error) {
+        console.error('Error starting voice chat:', error)
+        alert('Cannot start voice chat without microphone access')
+      }
+    }
   }
 
   useEffect(() => {
@@ -224,17 +257,7 @@ export default function VideoCallButton() {
             <button
               disabled={!isConnected}
               className={`${styles.button} ${isVoiceChatActive ? styles.buttonOn : ''}`}
-              onClick={() => {
-                if (avatarRef.current && isConnected) {
-                  if (isVoiceChatActive) {
-                    avatarRef.current.closeVoiceChat()
-                    setIsVoiceChatActive(false)
-                  } else {
-                    avatarRef.current.startVoiceChat()
-                    setIsVoiceChatActive(true)
-                  }
-                }
-              }}>
+              onClick={handleMicrophoneSwitch}>
               {isVoiceChatActive ? <MicOff size={18} /> : <Mic size={18} />}
             </button>
             <button

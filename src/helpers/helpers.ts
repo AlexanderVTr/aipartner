@@ -34,3 +34,20 @@ export const formatMessageDate = (dateString: string) => {
     })
   }
 }
+
+// Helper function to check and request microphone access
+export const checkMicrophoneAccess = async (): Promise<boolean> => {
+  if (typeof window === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+    return false
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    // Stop the stream immediately - we just needed permission
+    stream.getTracks().forEach((track) => track.stop())
+    return true
+  } catch (error) {
+    console.error('Error accessing microphone:', error)
+    return false
+  }
+}
