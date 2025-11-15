@@ -99,18 +99,52 @@ export default function SpeechToTextAdvancedButton({
 
       const audioFile = createAudioFile(audioBlob)
 
+      // Helper function to extract text from different response types
+      const getTranscriptionText = (
+        response: unknown,
+      ): string | null => {
+        if (!response || typeof response !== 'object') return null
+        
+        // SpeechToTextChunkResponseModel has direct text property
+        if ('text' in response && typeof response.text === 'string') {
+          return response.text
+        }
+        
+        // MultichannelSpeechToTextResponseModel has transcripts array
+        if (
+          'transcripts' in response &&
+          Array.isArray(response.transcripts) &&
+          response.transcripts.length > 0 &&
+          typeof response.transcripts[0] === 'object' &&
+          response.transcripts[0] !== null &&
+          'text' in response.transcripts[0] &&
+          typeof response.transcripts[0].text === 'string'
+        ) {
+          return response.transcripts[0].text
+        }
+        
+        // SpeechToTextWebhookResponseModel has message property
+        if ('message' in response && typeof response.message === 'string') {
+          return response.message
+        }
+        
+        return null
+      }
+
       // Retry logic for ElevenLabs API in case load balancer or network errors
       let transcription = null
+      let transcriptionText: string | null = null
       let attempts = 0
       const maxAttempts = 3
 
-      while (attempts < maxAttempts && !transcription?.text) {
+      while (attempts < maxAttempts && !transcriptionText) {
         attempts++
 
         try {
           transcription = await convertSpeechToText(audioFile)
+          transcriptionText = getTranscriptionText(transcription)
 
-          if (transcription?.text) {
+          if (transcriptionText) {
             break
           } else {
             if (attempts < maxAttempts) {
@@ -133,10 +167,10 @@ export default function SpeechToTextAdvancedButton({
       }
 
       // Apply result
-      if (transcription?.text) {
+      if (transcriptionText) {
         // Next get message from the Assistent and call new ELEVENLabs api connected to Text to speech
         const newText =
-          currentInput + (currentInput ? ' ' : '') + transcription.text
+          currentInput + (currentInput ? ' ' : '') + transcriptionText
         console.log(newText)
         await onMessageSend(newText)
       }
