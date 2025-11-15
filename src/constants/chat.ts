@@ -41,5 +41,5 @@ export const SILENCE_THRESHOLD = 10
 export const SILENCE_DURATION = 3000 // 3000ms
 
 export const TOOLTIP_CONTENT = {
-  VIDEO_CALL_DISABLED: 'You need at least 102 tokens to use this feature.',
+  VIDEO_CALL_DISABLED: 'You need to upgrade your plan to use this feature.',
 } as const

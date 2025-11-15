@@ -181,12 +181,14 @@ export default function VideoCallButton() {
     return (
       <>
         {TOOLTIP_CONTENT.VIDEO_CALL_DISABLED}
-        <Button
-          variant='secondary'
-          size='xs'
-          onClick={() => router.push('/pricing')}>
-          Upgrade plan
-        </Button>
+        <div className={styles.upgradePlanButton}>
+          <Button
+            variant='secondary'
+            size='xs'
+            onClick={() => router.push('/pricing')}>
+            Upgrade plan
+          </Button>
+        </div>
       </>
     )
   }, [router])
