@@ -21,6 +21,7 @@ import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
 // import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
 import VideoCallButton from '@/components/VideoCallButton/VideoCallButton'
+import DIDVideoCallButton from '@/components/DIDVideoCallButton/DIDVideoCallButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -228,6 +229,7 @@ export default function Chat() {
         />
         <div className={styles.actions}>
           <VideoCallButton />
+          <DIDVideoCallButton />
           {/* <SpeechToTextAdvancedButton
             currentInput={input}
             onMessageSend={handleSendMessage}
