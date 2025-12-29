@@ -110,6 +110,20 @@ export default function HedraVideoCallButton() {
                 })
               }
             })
+
+            // Also attach audio tracks
+            participant.audioTrackPublications.forEach((publication) => {
+              if (publication.track) {
+                console.log(
+                  'Attaching existing audio track from',
+                  participant.identity,
+                )
+                const audioElement = publication.track.attach()
+                audioElement.play().catch((error) => {
+                  console.error('Error playing existing audio track:', error)
+                })
+              }
+            })
           })
 
           if (room.remoteParticipants.size === 0) {
@@ -182,6 +196,17 @@ export default function HedraVideoCallButton() {
                 })
               }
             })
+
+            // Also attach audio tracks
+            participant.audioTrackPublications.forEach((publication) => {
+              if (publication.track) {
+                console.log('Attaching audio track from', participant.identity)
+                const audioElement = publication.track.attach()
+                audioElement.play().catch((error) => {
+                  console.error('Error playing audio:', error)
+                })
+              }
+            })
           },
         )
 
@@ -227,8 +252,13 @@ export default function HedraVideoCallButton() {
               })
               console.log('Video track attached and playing')
             } else if (track.kind === Track.Kind.Audio) {
-              // Audio tracks are handled automatically by LiveKit
-              console.log('Audio track subscribed')
+              // Attach audio track to a new audio element for playback
+              console.log('Attaching audio track for playback')
+              const audioElement = track.attach()
+              audioElement.play().catch((error) => {
+                console.error('Error playing audio:', error)
+              })
+              console.log('Audio track attached and playing')
             }
           },
         )
