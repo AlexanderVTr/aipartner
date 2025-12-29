@@ -41,26 +41,3 @@ export const createLiveKitRoom = async () => {
     throw error
   }
 }
-
-export const startHedraAvatar = async (roomName: string, avatarId?: string) => {
-  try {
-    const response = await fetch('/api/hedra/start-avatar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ roomName, avatarId }),
-    })
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(errorData.error || 'Failed to start Hedra avatar')
-    }
-
-    const data = await response.json()
-    return data
-  } catch (error) {
-    console.error('Error starting Hedra avatar:', error)
-    throw error
-  }
-}

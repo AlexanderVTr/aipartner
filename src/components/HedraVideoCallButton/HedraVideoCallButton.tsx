@@ -3,11 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
 import styles from '../VideoCallButton/VideoCallButton.module.scss'
 import { hedraConfig } from '@/lib/ai/Hedra/avatarConfig'
-import {
-  getHedraToken,
-  createLiveKitRoom,
-  startHedraAvatar,
-} from '@/lib/ai/Hedra/getToken'
+import { getHedraToken, createLiveKitRoom } from '@/lib/ai/Hedra/getToken'
 import VideoCallStatus from '@/components/UI/VideoCallStatus/VideoCallStatus'
 import { useTokens } from '@/contexts/TokensContext'
 import Tooltip from '../UI/Tooltip/Tooltip'
@@ -489,7 +485,6 @@ export default function HedraVideoCallButton() {
       setIsVoiceChatActive(false)
       setHedraToken(undefined)
       setRoomName('')
-      localStorage.removeItem('hedra_uploaded_avatar_id')
     }
   }
 
@@ -531,7 +526,6 @@ export default function HedraVideoCallButton() {
         onStopAvatar()
       }
       setSessionActive(false)
-      localStorage.removeItem('hedra_uploaded_avatar_id')
     }
   }, [])
 
@@ -555,7 +549,6 @@ export default function HedraVideoCallButton() {
             console.error('Error during page unload cleanup:', error)
           }
         }
-        localStorage.removeItem('hedra_uploaded_avatar_id')
       }
     }
 

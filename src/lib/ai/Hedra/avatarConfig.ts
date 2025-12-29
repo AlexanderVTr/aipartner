@@ -5,8 +5,8 @@
 // - LIVEKIT_API_SECRET: Your LiveKit API secret
 // - HEDRA_API_KEY: Your Hedra API key
 //
-// Optional: HEDRA_AVATAR_ID (if you have a pre-created avatar from Hedra Studio)
-// If not provided, you can upload a local image file
+// Required: HEDRA_AVATAR_ID - Avatar must be pre-created in Hedra Studio (https://studio.hedra.com)
+// The avatar ID must be a valid UUID format
 
 export const hedraConfig = {
   // LiveKit connection details
