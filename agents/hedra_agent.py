@@ -196,10 +196,20 @@ async def hedra_avatar_session(ctx: agents.JobContext):
         
         try:
             # Text-to-Speech: ElevenLabs for natural voice synthesis
+            # Popular female voices:
+            # - Rachel: 21m00Tcm4TlvDq8ikWAM (calm, natural - DEFAULT)
+            # - Bella: EXAVITQu4vr4xnSDxMaL (soft, young)
+            # - Nicole: piTKgcLEGmPE4e6mEKli (warm, friendly)
+            # - Elli: MF3mGyEYCl7XYWbV9V6O (emotional, expressive)
+            
+            # Get voice ID from environment or use Rachel as default
+            voice_id = os.getenv("ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL")
+            
             tts = elevenlabs.TTS(
                 model="eleven_turbo_v2_5",  # Fast, multilingual model
+                voice_id=voice_id,  # Female voice
             )
-            print("✓ ElevenLabs TTS initialized")
+            print(f"✓ ElevenLabs TTS initialized with voice: {voice_id}")
         except Exception as e:
             print(f"❌ Failed to initialize ElevenLabs TTS: {e}")
             print("Check your ELEVEN_API_KEY in .env file")
