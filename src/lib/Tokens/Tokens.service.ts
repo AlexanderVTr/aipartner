@@ -9,7 +9,8 @@ export async function getTokensFromDB() {
 
   const isPro = has({ feature: 'pro_tokens' })
   const isPremium = has({ feature: 'premium_tokens' })
-  const plan = isPro ? 'pro' : isPremium ? 'premium' : 'free'
+  const isDemo = has({ feature: 'unlimited' })
+  const plan = isPro ? 'pro' : isPremium ? 'premium' : isDemo ? 'demo' : 'free'
 
   // If user not logged in, return free tokens
   if (!user) {
@@ -17,35 +18,99 @@ export async function getTokensFromDB() {
     return tokens
   }
 
+  const userEmail = user.emailAddresses[0]?.emailAddress
+  if (!userEmail) {
+    console.error('User has no email address')
+    return TOKENS_PER_PLAN.free
+  }
+
+  // Try to find user by clerk_user_id first
   const { data, error } = await supabaseAdmin
     .from('users')
-    .select('tokens_balance, plan')
+    .select('id, tokens_balance, plan')
     .eq('clerk_user_id', user.id)
     .single()
 
-  if (error) {
-    // Create user in the database
-    const tokens = TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
+  if (!error && data) {
+    // User found by clerk_user_id
+    // Only update plan if upgrading, never downgrade on refresh
+    if (data.plan !== plan) {
+      const planHierarchy = { free: 0, pro: 1, premium: 2, demo: 3 }
+      const currentPlanLevel =
+        planHierarchy[data.plan as keyof typeof planHierarchy] ?? 0
+      const newPlanLevel =
+        planHierarchy[plan as keyof typeof planHierarchy] ?? 0
 
-    await supabaseAdmin.from('users').insert({
-      clerk_user_id: user.id,
-      email: user.emailAddresses[0].emailAddress,
-      tokens_balance: tokens,
-      plan: plan,
-      created_at: new Date().toISOString(),
-    })
+      // Only reset tokens if upgrading to a better plan
+      if (newPlanLevel > currentPlanLevel) {
+        const tokens = await resetTokensForPlan(plan)
+        return tokens
+      }
+      // If downgrading or same level, keep existing tokens and plan
+    }
+    return data.tokens_balance
+  }
+
+  // User not found by clerk_user_id - check if user exists with same email
+  // This handles the case where user deleted and recreated their Clerk account
+  const { data: existingUser, error: emailError } = await supabaseAdmin
+    .from('users')
+    .select('id, tokens_balance, plan')
+    .eq('email', userEmail)
+    .maybeSingle()
+
+  if (existingUser && !emailError) {
+    // User exists with same email but different clerk_user_id
+    // Update clerk_user_id and preserve existing tokens/plan unless upgrading
+    const currentTokens = existingUser.tokens_balance || TOKENS_PER_PLAN.free
+    const currentPlan = existingUser.plan || 'free'
+
+    // Only reset tokens if upgrading to a better plan
+    const planHierarchy = { free: 0, pro: 1, premium: 2, demo: 3 }
+    const shouldResetTokens =
+      planHierarchy[plan as keyof typeof planHierarchy] >
+      planHierarchy[currentPlan as keyof typeof planHierarchy]
+
+    const tokens = shouldResetTokens
+      ? TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
+      : currentTokens
+    const finalPlan = shouldResetTokens ? plan : currentPlan
+
+    const { error: updateError } = await supabaseAdmin
+      .from('users')
+      .update({
+        clerk_user_id: user.id,
+        tokens_balance: tokens,
+        plan: finalPlan,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existingUser.id)
+
+    if (updateError) {
+      console.error('Error updating user clerk_user_id:', updateError)
+      return TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
+    }
+
     return tokens
   }
 
-  // Check if plan has changed and update tokens
-  // It's working just after user upgrade to better plan
-  // if user downgrade to worse plan, it's wait for the plan date to change
-  if (data.plan !== plan) {
-    const tokens = await resetTokensForPlan(plan)
-    return tokens
+  // No existing user found - create new user
+  const tokens = TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
+
+  const { error: insertError } = await supabaseAdmin.from('users').insert({
+    clerk_user_id: user.id,
+    email: userEmail,
+    tokens_balance: tokens,
+    plan: plan,
+    created_at: new Date().toISOString(),
+  })
+
+  if (insertError) {
+    console.error('Error creating user:', insertError)
+    return TOKENS_PER_PLAN[plan as keyof typeof TOKENS_PER_PLAN]
   }
 
-  return data.tokens_balance
+  return tokens
 }
 
 export async function decrementTokensDB() {
@@ -71,7 +136,9 @@ export async function decrementTokensDB() {
   }
 }
 
-export async function resetTokensForPlan(newPlan: 'free' | 'pro' | 'premium') {
+export async function resetTokensForPlan(
+  newPlan: 'free' | 'pro' | 'premium' | 'demo',
+) {
   const user = await currentUser()
   if (!user) return
 
