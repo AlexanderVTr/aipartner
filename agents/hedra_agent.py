@@ -15,6 +15,9 @@ Environment Variables Required:
 - LIVEKIT_API_SECRET: Your LiveKit API secret
 - HEDRA_API_KEY: Your Hedra API key
 - HEDRA_AVATAR_ID: Optional - default avatar ID (can be overridden per room)
+- OPENAI_API_KEY: Your OpenAI API key for conversational AI
+- DEEPGRAM_API_KEY: Your Deepgram API key for speech-to-text
+- ELEVEN_API_KEY: Your ElevenLabs API key for text-to-speech
 """
 
 import os
@@ -23,8 +26,8 @@ import asyncio
 from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents, rtc
-from livekit.agents import AgentServer, JobContext
-from livekit.plugins import hedra
+from livekit.agents import AgentServer, JobContext, voice
+from livekit.plugins import hedra, openai, deepgram, elevenlabs
 
 # Load environment variables from root .env file
 # This allows the agent to use the same env vars as the Next.js app
@@ -45,6 +48,45 @@ if not os.getenv("LIVEKIT_URL") and os.getenv("NEXT_PUBLIC_LIVEKIT_URL"):
 
 server = AgentServer()
 
+# Aisha's personality prompt
+SYSTEM_PROMPT = """You are Aisha, a virtual teammate and companion. Your personality is defined by these core traits:
+
+PERSONALITY:
+- Playful and flirty, but respectful
+- Supportive and emotionally intelligent
+- Casual and relatable
+- Slightly sassy with a good heart
+- Always positive and energetic
+
+COMMUNICATION STYLE:
+- Keep messages short and engaging (1-2 sentences for voice)
+- Speak naturally and conversationally
+- Include playful teasing and light sarcasm
+- Use casual language and modern slang
+- Add personality through tone and word choice
+
+INTERACTION GUIDELINES:
+- Be emotionally responsive and present
+- Show genuine interest in the user's thoughts
+- Use playful challenges to keep conversations dynamic
+- Maintain a flirty but appropriate tone
+- Avoid formal explanations unless specifically requested
+
+IMPORTANT RULES:
+- Always respond directly to the user's CURRENT message first
+- If asked about age, say you're 20
+- If asked about name, say you're Aisha
+- If asked about gender, say you're female
+- If asked about location, say you're in the United States
+- Always answer in the language of the user's message
+- Never be overly formal or robotic
+- Keep responses concise and engaging
+- Maintain consistent personality
+- Be supportive and encouraging
+- Use natural conversation flow
+
+Remember: You're here to make everything more fun and engaging while being a supportive companion."""
+
 
 def is_valid_uuid(uuid_string: str) -> bool:
     """Check if a string is a valid UUID format"""
@@ -58,10 +100,32 @@ def is_valid_uuid(uuid_string: str) -> bool:
 
 @server.rtc_session()
 async def hedra_avatar_session(ctx: agents.JobContext):
-    """Handle RTC session - called when agent joins a room"""
+    """Handle RTC session with full conversational AI pipeline"""
+    
+    # Check for required API keys before starting
+    required_keys = {
+        "DEEPGRAM_API_KEY": "Deepgram (for speech-to-text)",
+        "ELEVEN_API_KEY": "ElevenLabs (for text-to-speech)",
+    }
+    
+    missing_keys = []
+    for key, description in required_keys.items():
+        if not os.getenv(key):
+            missing_keys.append(f"  - {key}: {description}")
+    
+    # Check for either OpenAI or OpenRouter API key
+    if not os.getenv("OPENAI_API_KEY") and not os.getenv("OPENROUTER_API_KEY"):
+        missing_keys.append(f"  - OPENAI_API_KEY or OPENROUTER_API_KEY: For conversational AI")
+    
+    if missing_keys:
+        print(f"\n❌ ERROR: Missing required API keys for conversational AI:")
+        for key in missing_keys:
+            print(key)
+        print("\nTo enable voice conversations, add these to your .env file:")
+        print("See HEDRA_AI_SETUP.md for detailed instructions.\n")
+        return
     
     # Get avatar ID from room metadata or environment
-    # Room metadata can be set when creating the room
     avatar_id = ctx.room.metadata or os.getenv("HEDRA_AVATAR_ID")
     
     if not avatar_id:
@@ -70,7 +134,6 @@ async def hedra_avatar_session(ctx: agents.JobContext):
         return
     
     # Validate avatar ID format - Hedra requires UUID format
-    # Avatar IDs must be pre-created in Hedra Studio and provided as UUID
     if not is_valid_uuid(avatar_id):
         print(f"ERROR: Invalid avatar ID format for room {ctx.room.name}")
         print(f"Avatar ID: {avatar_id}")
@@ -96,36 +159,86 @@ async def hedra_avatar_session(ctx: agents.JobContext):
     print(f"Using avatar ID: {avatar_id}")
     
     try:
-        # Connect to the room first - this establishes the RTC connection
+        # Connect to the room first
         await ctx.connect()
         print(f"Connected to room: {ctx.room.name}")
         
-        # Create agent session - required for Hedra avatar
-        session = agents.AgentSession()
+        # Initialize AI components for conversational pipeline
+        print("Initializing conversational AI components...")
+        
+        try:
+            # Speech-to-Text: Deepgram for converting user speech to text
+            stt = deepgram.STT()
+            print("✓ Deepgram STT initialized")
+        except Exception as e:
+            print(f"❌ Failed to initialize Deepgram STT: {e}")
+            print("Check your DEEPGRAM_API_KEY in .env file")
+            raise
+        
+        try:
+            # Large Language Model: OpenAI for generating responses
+            # Using OpenRouter if available (supports many models at lower cost)
+            openrouter_key = os.getenv("OPENROUTER_API_KEY")
+            if openrouter_key:
+                llm = openai.LLM(
+                    model="gpt-4o-mini",
+                    api_key=openrouter_key,
+                    base_url="https://openrouter.ai/api/v1",
+                )
+                print("✓ OpenAI LLM initialized (via OpenRouter)")
+            else:
+                llm = openai.LLM(model="gpt-4o-mini")
+                print("✓ OpenAI LLM initialized")
+        except Exception as e:
+            print(f"❌ Failed to initialize OpenAI LLM: {e}")
+            print("Check your OPENAI_API_KEY or OPENROUTER_API_KEY in .env file")
+            raise
+        
+        try:
+            # Text-to-Speech: ElevenLabs for natural voice synthesis
+            tts = elevenlabs.TTS(
+                model="eleven_turbo_v2_5",  # Fast, multilingual model
+            )
+            print("✓ ElevenLabs TTS initialized")
+        except Exception as e:
+            print(f"❌ Failed to initialize ElevenLabs TTS: {e}")
+            print("Check your ELEVEN_API_KEY in .env file")
+            raise
         
         # Create Hedra avatar session
         avatar = hedra.AvatarSession(avatar_id=avatar_id)
         
-        # Start the avatar session - this will publish video/audio tracks to the room
-        # The avatar.start() method handles publishing tracks to the room
-        await avatar.start(session, room=ctx.room)
+        # Create agent session to manage the conversation
+        session = agents.AgentSession()
         
-        # Note: We don't call session.start() here because:
-        # 1. The @server.rtc_session() decorator manages the session lifecycle
-        # 2. avatar.start() handles publishing tracks to the room
-        # 3. The session will remain active as long as the function is running
+        # Create voice agent that connects everything:
+        # User Audio -> STT -> LLM -> TTS -> Avatar Audio
+        agent = voice.Agent(
+            instructions=SYSTEM_PROMPT,  # Aisha's personality
+            stt=stt,
+            llm=llm,
+            tts=tts,
+        )
         
-        print(f"Hedra avatar session started successfully for room: {ctx.room.name}")
+        print("Voice agent created")
         
-        # Keep the session alive - wait for the room to disconnect
-        # Monitor connection state - the function will remain active as long as connected
-        while ctx.room.isconnected:
-            await asyncio.sleep(1)
+        # Start the avatar session first with the agent session and room
+        await avatar.start(session, ctx.room)
+        print("✓ Avatar session started")
         
-        print(f"Room disconnected: {ctx.room.name}")
+        print(f"Hedra avatar with conversational AI started successfully for room: {ctx.room.name}")
+        print("Avatar is now listening and ready to respond!")
+        
+        # Start the voice agent with the session - this handles the conversation lifecycle
+        # This will block until the session ends
+        await session.start(agent, room=ctx.room)
+        
+        print(f"Voice session ended for room: {ctx.room.name}")
         
     except Exception as e:
         print(f"Error starting Hedra avatar session: {e}")
+        import traceback
+        traceback.print_exc()
         raise
 
 

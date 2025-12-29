@@ -1,6 +1,14 @@
-# Hedra LiveKit Agent
+# Hedra LiveKit Agent with Conversational AI
 
-This agent service automatically joins LiveKit rooms and starts Hedra avatar sessions when participants connect.
+This agent service automatically joins LiveKit rooms and starts Hedra avatar sessions with full conversational AI capabilities when participants connect.
+
+## Features
+
+- **Hedra Avatar**: Live avatar video streaming
+- **Speech-to-Text**: Deepgram for voice recognition
+- **AI Responses**: OpenAI GPT for intelligent conversations
+- **Text-to-Speech**: ElevenLabs for natural voice synthesis
+- **Voice Activity Detection**: Automatic turn-taking
 
 ## Setup
 
@@ -10,12 +18,23 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
    ```
 
 2. **Set environment variables:**
+   
+   Add these to your `.env` file in the project root:
+   
    ```bash
-   export LIVEKIT_URL="wss://your-project.livekit.cloud"
-   export LIVEKIT_API_KEY="your-api-key"
-   export LIVEKIT_API_SECRET="your-api-secret"
-   export HEDRA_API_KEY="your-hedra-api-key"
-   export HEDRA_AVATAR_ID="your-avatar-id"  # Optional
+   # LiveKit Configuration
+   LIVEKIT_URL="wss://your-project.livekit.cloud"
+   LIVEKIT_API_KEY="your-livekit-api-key"
+   LIVEKIT_API_SECRET="your-livekit-api-secret"
+   
+   # Hedra Avatar
+   HEDRA_API_KEY="your-hedra-api-key"
+   HEDRA_AVATAR_ID="your-avatar-uuid"  # Get from Hedra Studio
+   
+   # AI Services
+   OPENAI_API_KEY="your-openai-api-key"      # For conversational AI
+   DEEPGRAM_API_KEY="your-deepgram-api-key"  # For speech-to-text
+   ELEVEN_API_KEY="your-elevenlabs-api-key"  # For text-to-speech
    ```
 
 3. **Run the agent:**
@@ -31,9 +50,12 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
 
 1. Agent connects to LiveKit server
 2. When a participant joins a room, the agent automatically joins
-3. Agent starts Hedra avatar session with the configured avatar ID
-4. Avatar publishes video/audio tracks to the room
-5. Client receives tracks and displays video
+3. Agent initializes the conversational AI pipeline:
+   - Deepgram STT listens to user's voice
+   - OpenAI GPT generates intelligent responses
+   - ElevenLabs TTS synthesizes speech
+   - Hedra avatar lip-syncs and displays video
+4. User can have natural conversations with the avatar
 
 ## Configuration
 

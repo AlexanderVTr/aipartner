@@ -14,14 +14,19 @@ The HedraVideoCallButton provides two modes of operation:
 Add the following to your `.env` file:
 
 ```bash
-# Required for both modes
+# LiveKit Configuration (Required)
 NEXT_PUBLIC_LIVEKIT_URL=wss://your-livekit-server.livekit.cloud
 LIVEKIT_API_KEY=your-livekit-api-key
 LIVEKIT_API_SECRET=your-livekit-api-secret
-HEDRA_API_KEY=your-hedra-api-key
 
-# Optional - for pre-configured avatars
+# Hedra Avatar (Required)
+HEDRA_API_KEY=your-hedra-api-key
 HEDRA_AVATAR_ID=your-avatar-id-from-hedra-studio
+
+# AI Services for Conversational Avatar (Required)
+OPENAI_API_KEY=your-openai-api-key        # For conversational AI
+DEEPGRAM_API_KEY=your-deepgram-api-key    # For speech-to-text
+ELEVEN_API_KEY=your-elevenlabs-api-key    # For text-to-speech
 ```
 
 ## How It Works
