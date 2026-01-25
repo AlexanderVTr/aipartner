@@ -1,0 +1,24 @@
+# LiveKit Cloud Agent Configuration
+# This file configures your agent deployment on LiveKit Cloud
+
+[project]
+# Your LiveKit Cloud project subdomain (found in your project settings)
+# Use the full subdomain with ID (e.g., aisha-966mjgrn)
+subdomain = "aisha-966mjgrn"
+
+[agent]
+# Agent name (will be created on first deploy)
+name = "hedra-agent"
+
+# Optional: Select deployment region
+# Available regions: us-east-1, us-west-2, eu-west-1, ap-southeast-1
+# region = "us-east-1"
+
+# Optional: Resource limits
+# [agent.resources]
+# cpu = "1"
+# memory = "2Gi"
+
+# Optional: Environment variables (prefer using secrets for sensitive data)
+# [agent.env]
+# HEDRA_AVATAR_ID = "your-default-avatar-id"

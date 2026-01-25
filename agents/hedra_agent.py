@@ -203,7 +203,7 @@ async def hedra_avatar_session(ctx: agents.JobContext):
             # - Elli: MF3mGyEYCl7XYWbV9V6O (emotional, expressive)
             
             # Get voice ID from environment or use Rachel as default
-            voice_id = os.getenv("ELEVENLABS_VOICE_ID", "EXAVITQu4vr4xnSDxMaL")
+            voice_id = os.getenv("ELEVENLABS_VOICE_ID", "4tRn1lSkEn13EVTuqb0g")
             
             tts = elevenlabs.TTS(
                 model="eleven_turbo_v2_5",  # Fast, multilingual model
