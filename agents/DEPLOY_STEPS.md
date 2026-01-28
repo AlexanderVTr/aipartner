@@ -69,10 +69,13 @@ lk agent create --region us-east-1 agents/
 ```
 
 **Available regions:**
-- `us-east-1` - US East (Virginia)
-- `us-west-2` - US West (Oregon)
-- `eu-west-1` - Europe (Ireland)
-- `ap-southeast-1` - Asia Pacific (Singapore)
+- `us-east` - US East (Ashburn, Virginia)
+- `eu-central` - Europe (Frankfurt, Germany) ⭐ **Recommended for EU users/ElevenLabs**
+
+**⚠️ Region Selection Tip:**
+- If you're in EU or using ElevenLabs (which has EU servers), use `eu-central` to avoid latency issues
+- US East (`us-east`) can cause "no audio frames" errors with ElevenLabs due to cross-Atlantic latency
+- Region is immutable - cannot be changed after creation
 
 ### Step 4: Verify Deployment
 
