@@ -7,7 +7,7 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
 - **Hedra Avatar**: Live avatar video streaming
 - **Speech-to-Text**: Deepgram for voice recognition
 - **AI Responses**: OpenAI GPT for intelligent conversations
-- **Text-to-Speech**: ElevenLabs for natural voice synthesis
+- **Text-to-Speech**: Cartesia for natural voice synthesis
 - **Voice Activity Detection**: Automatic turn-taking
 
 ## Setup
@@ -34,7 +34,7 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
    # AI Services
    OPENAI_API_KEY="your-openai-api-key"      # For conversational AI
    DEEPGRAM_API_KEY="your-deepgram-api-key"  # For speech-to-text
-   ELEVEN_API_KEY="your-elevenlabs-api-key"  # For text-to-speech
+   CARTESIA_API_KEY="your-cartesia-api-key"  # For text-to-speech
    ```
 
 3. **Run the agent:**
@@ -53,7 +53,7 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
 3. Agent initializes the conversational AI pipeline:
    - Deepgram STT listens to user's voice
    - OpenAI GPT generates intelligent responses
-   - ElevenLabs TTS synthesizes speech
+   - Cartesia TTS synthesizes speech
    - Hedra avatar lip-syncs and displays video
 4. User can have natural conversations with the avatar
 
@@ -118,10 +118,12 @@ This agent service automatically joins LiveKit rooms and starts Hedra avatar ses
    lk agent secrets set DEEPGRAM_API_KEY="your-deepgram-api-key"
    
    # Text-to-Speech
-   lk agent secrets set ELEVEN_API_KEY="your-elevenlabs-api-key"
+   lk agent secrets set CARTESIA_API_KEY="your-cartesia-api-key"
    
-   # Optional: Custom ElevenLabs voice ID
-   lk agent secrets set ELEVENLABS_VOICE_ID="your-voice-id"
+   # Optional: Custom Cartesia model, voice, and language
+   lk agent secrets set CARTESIA_MODEL="sonic-3"
+   lk agent secrets set CARTESIA_VOICE_ID="your-voice-id"
+   lk agent secrets set CARTESIA_LANGUAGE="en"
    ```
    
    **Important:** `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET` are **automatically injected** by LiveKit Cloud - you don't need to set them!

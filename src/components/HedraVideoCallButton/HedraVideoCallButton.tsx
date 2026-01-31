@@ -31,6 +31,7 @@ export default function HedraVideoCallButton() {
     resolve: () => void
     reject: (error: Error) => void
   } | null>(null)
+  const callStartTimeRef = useRef<number | null>(null)
   const [isConnected, setIsConnected] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
   const [hedraToken, setHedraToken] = useState<string | undefined>(undefined)
@@ -38,13 +39,11 @@ export default function HedraVideoCallButton() {
   const [roomName, setRoomName] = useState<string>('')
   const [sessionActive, setSessionActive] = useState(false) // Track active session to prevent concurrency
 
-  const { tokens } = useTokens()
+  const { tokens, deductVideoCallTokens } = useTokens()
   const router = useRouter()
 
   useEffect(() => {
-    if (tokens > 101) {
-      setIsVideoCallDisabled(false)
-    }
+    setIsVideoCallDisabled(tokens <= 10)
   }, [tokens])
 
   // ROOM INITIALIZATION
@@ -77,6 +76,7 @@ export default function HedraVideoCallButton() {
           console.log('Connected to Hedra room')
           clearTimeout(connectionTimeout)
           isConnectedRef.current = true
+          callStartTimeRef.current = Date.now()
           setIsConnected(true)
           setIsConnecting(false)
 
@@ -492,6 +492,15 @@ export default function HedraVideoCallButton() {
     try {
       console.log('Closing Hedra session...')
 
+      if (callStartTimeRef.current !== null) {
+        const durationMs = Date.now() - callStartTimeRef.current
+        const durationMinutes = durationMs / 60000
+        if (durationMinutes > 0) {
+          await deductVideoCallTokens(durationMinutes)
+        }
+        callStartTimeRef.current = null
+      }
+
       // Stop the avatar and disconnect from room
       await onStopAvatar()
 
@@ -551,7 +560,14 @@ export default function HedraVideoCallButton() {
 
   useEffect(() => {
     return () => {
-      // Cleanup on component unmount
+      if (callStartTimeRef.current !== null) {
+        const durationMinutes =
+          (Date.now() - callStartTimeRef.current) / 60000
+        if (durationMinutes > 0) {
+          deductVideoCallTokens(durationMinutes)
+        }
+        callStartTimeRef.current = null
+      }
       if (roomRef.current) {
         onStopAvatar()
       }

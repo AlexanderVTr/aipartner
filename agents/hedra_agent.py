@@ -17,7 +17,7 @@ Environment Variables Required:
 - HEDRA_AVATAR_ID: Optional - default avatar ID (can be overridden per room)
 - OPENAI_API_KEY: Your OpenAI API key for conversational AI
 - DEEPGRAM_API_KEY: Your Deepgram API key for speech-to-text
-- ELEVEN_API_KEY: Your ElevenLabs API key for text-to-speech
+- CARTESIA_API_KEY: Your Cartesia API key for text-to-speech
 """
 
 import os
@@ -27,7 +27,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from livekit import agents, rtc
 from livekit.agents import AgentServer, JobContext, voice
-from livekit.plugins import hedra, openai, deepgram, elevenlabs
+from livekit.plugins import hedra, openai, deepgram, cartesia
 
 # Load environment variables from root .env file
 # This allows the agent to use the same env vars as the Next.js app
@@ -105,7 +105,7 @@ async def hedra_avatar_session(ctx: agents.JobContext):
     # Check for required API keys before starting
     required_keys = {
         "DEEPGRAM_API_KEY": "Deepgram (for speech-to-text)",
-        "ELEVEN_API_KEY": "ElevenLabs (for text-to-speech)",
+        "CARTESIA_API_KEY": "Cartesia (for text-to-speech)",
     }
     
     missing_keys = []
@@ -195,24 +195,21 @@ async def hedra_avatar_session(ctx: agents.JobContext):
             raise
         
         try:
-            # Text-to-Speech: ElevenLabs for natural voice synthesis
-            # Popular female voices:
-            # - Rachel: 21m00Tcm4TlvDq8ikWAM (calm, natural - DEFAULT)
-            # - Bella: EXAVITQu4vr4xnSDxMaL (soft, young)
-            # - Nicole: piTKgcLEGmPE4e6mEKli (warm, friendly)
-            # - Elli: MF3mGyEYCl7XYWbV9V6O (emotional, expressive)
+            # Text-to-Speech: Cartesia for natural voice synthesis
+            # Get model and voice from environment or use defaults
+            model = os.getenv("CARTESIA_MODEL", "sonic-3")
+            voice_id = os.getenv("CARTESIA_VOICE_ID", "794f9389-aac1-45b6-b726-9d9369183238")
+            language = os.getenv("CARTESIA_LANGUAGE", "en")
             
-            # Get voice ID from environment or use Rachel as default
-            voice_id = os.getenv("ELEVENLABS_VOICE_ID", "4tRn1lSkEn13EVTuqb0g")
-            
-            tts = elevenlabs.TTS(
-                model="eleven_turbo_v2_5",  # Fast, multilingual model
-                voice_id=voice_id,  # Female voice
+            tts = cartesia.TTS(
+                model=model,
+                voice=voice_id,
+                language=language,
             )
-            print(f"✓ ElevenLabs TTS initialized with voice: {voice_id}")
+            print(f"✓ Cartesia TTS initialized with model: {model}, voice: {voice_id}")
         except Exception as e:
-            print(f"❌ Failed to initialize ElevenLabs TTS: {e}")
-            print("Check your ELEVEN_API_KEY in .env file")
+            print(f"❌ Failed to initialize Cartesia TTS: {e}")
+            print("Check your CARTESIA_API_KEY in .env file")
             raise
         
         # Create Hedra avatar session

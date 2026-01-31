@@ -17,6 +17,7 @@ lk cloud auth
 ```
 
 **What happens:**
+
 - Opens browser for Google login
 - Prompts for device name (enter any name, e.g., "My Mac")
 - Links your CLI to LiveKit Cloud account
@@ -39,10 +40,12 @@ lk agent secrets set OPENROUTER_API_KEY="your-openrouter-api-key"
 lk agent secrets set DEEPGRAM_API_KEY="your-deepgram-api-key"
 
 # Text-to-Speech (Required)
-lk agent secrets set ELEVEN_API_KEY="your-elevenlabs-api-key"
+lk agent secrets set CARTESIA_API_KEY="your-cartesia-api-key"
 
-# Optional: Custom voice
-lk agent secrets set ELEVENLABS_VOICE_ID="your-voice-id"
+# Optional: Custom model, voice, and language
+lk agent secrets set CARTESIA_MODEL="sonic-3"
+lk agent secrets set CARTESIA_VOICE_ID="your-voice-id"
+lk agent secrets set CARTESIA_LANGUAGE="en"
 ```
 
 **Note:** You can set secrets before or after creating the agent. If you set them before, they'll be applied during creation.
@@ -56,6 +59,7 @@ lk agent create agents/
 ```
 
 **What happens:**
+
 - CLI will prompt you to select a region (choose closest to your users)
 - Creates the agent in LiveKit Cloud
 - Generates/updates `livekit.toml` with agent ID
@@ -69,12 +73,13 @@ lk agent create --region us-east-1 agents/
 ```
 
 **Available regions:**
+
 - `us-east` - US East (Ashburn, Virginia)
-- `eu-central` - Europe (Frankfurt, Germany) ⭐ **Recommended for EU users/ElevenLabs**
+- `eu-central` - Europe (Frankfurt, Germany)
 
 **⚠️ Region Selection Tip:**
-- If you're in EU or using ElevenLabs (which has EU servers), use `eu-central` to avoid latency issues
-- US East (`us-east`) can cause "no audio frames" errors with ElevenLabs due to cross-Atlantic latency
+
+- Choose the region closest to your users for best latency
 - Region is immutable - cannot be changed after creation
 
 ### Step 4: Verify Deployment
@@ -120,6 +125,7 @@ lk agent deploy agents/
 ```
 
 This will:
+
 - Build new Docker image with your changes
 - Deploy new version using rolling deployment
 - Old instances gracefully shut down after active sessions complete
@@ -127,11 +133,13 @@ This will:
 ## 📊 Useful Commands
 
 ### Check Agent Status
+
 ```bash
 lk agent status
 ```
 
 ### View Logs
+
 ```bash
 # Deploy logs (build/deployment)
 lk agent logs --log-type deploy
@@ -141,26 +149,31 @@ lk agent logs --log-type deploy
 ```
 
 ### List All Agents
+
 ```bash
 lk agent list
 ```
 
 ### View Secrets (keys only, not values)
+
 ```bash
 lk agent secrets
 ```
 
 ### Restart Agent
+
 ```bash
 lk agent restart
 ```
 
 ### Rollback to Previous Version
+
 ```bash
 lk agent rollback
 ```
 
 ### Delete Agent
+
 ```bash
 lk agent delete
 ```
@@ -176,7 +189,7 @@ lk agent secrets set HEDRA_API_KEY="your-key"
 lk agent secrets set HEDRA_AVATAR_ID="your-uuid"
 lk agent secrets set OPENAI_API_KEY="your-key"
 lk agent secrets set DEEPGRAM_API_KEY="your-key"
-lk agent secrets set ELEVEN_API_KEY="your-key"
+lk agent secrets set CARTESIA_API_KEY="your-key"
 
 # 3. Create and deploy
 lk agent create agents/
@@ -213,18 +226,22 @@ lk agent status
 ## 🐛 Troubleshooting
 
 ### "agent ID or [livekit.toml] required"
+
 - **Solution:** Use `lk agent create` instead of `lk agent deploy` for first-time setup
 
 ### "project does not match agent subdomain"
+
 - **Solution:** Check `livekit.toml` has correct `subdomain` in `[project]` section
 - Run `lk agent config --id AGENT_ID` to regenerate config
 
 ### Build fails
+
 - Check `agents/Dockerfile` exists and is valid
 - Verify `agents/requirements.txt` is correct
 - Ensure build completes within 10 minutes
 
 ### Agent not connecting
+
 - Verify all secrets are set: `lk agent secrets`
 - Check logs: `lk agent logs`
 - Ensure project is active in dashboard

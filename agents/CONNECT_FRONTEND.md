@@ -23,6 +23,7 @@ NEXT_PUBLIC_LIVEKIT_URL=wss://aisha-966mjgrn.livekit.cloud
 ```
 
 **Where to find your project URL:**
+
 1. Go to [cloud.livekit.io](https://cloud.livekit.io)
 2. Select your project (aisha)
 3. Go to Settings → Keys
@@ -83,6 +84,7 @@ subdomain = "aisha-966mjgrn"  # Must match your project
 ### Option 1: Already Configured (Most Likely)
 
 If your `.env` already has:
+
 ```bash
 NEXT_PUBLIC_LIVEKIT_URL=wss://aisha-966mjgrn.livekit.cloud
 LIVEKIT_API_KEY=your-key
@@ -90,6 +92,7 @@ LIVEKIT_API_SECRET=your-secret
 ```
 
 **You're done!** The frontend will automatically use the deployed agent when:
+
 - ✅ Agent is deployed to the same project
 - ✅ Frontend uses the same LiveKit Cloud URL
 - ✅ Agent status is `Running` or `Sleeping`
@@ -105,6 +108,7 @@ If you need to update your LiveKit Cloud URL:
    - Copy "Project URL"
 
 2. **Update `.env` file:**
+
    ```bash
    NEXT_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
    LIVEKIT_API_KEY=your-api-key
@@ -131,6 +135,7 @@ lk agent status
 ```
 
 Expected output:
+
 ```
 Status: Running (or Sleeping)
 ```
@@ -149,6 +154,7 @@ lk agent logs --follow
 4. Check agent logs: `lk agent logs --follow`
 
 You should see:
+
 - **Frontend logs:** "Connected to Hedra room"
 - **Agent logs:** "Starting Hedra avatar session for room: ..."
 
@@ -159,13 +165,16 @@ You should see:
 **Problem:** Agent doesn't join when frontend creates a room.
 
 **Solutions:**
+
 1. Verify agent is deployed to same project:
+
    ```bash
    lk agent status
    # Check project matches
    ```
 
 2. Check agent logs for errors:
+
    ```bash
    lk agent logs
    ```
@@ -179,7 +188,9 @@ You should see:
 **Problem:** Agent joins but doesn't respond to voice.
 
 **Solutions:**
+
 1. Check agent secrets are set:
+
    ```bash
    lk agent secrets
    ```
@@ -187,7 +198,7 @@ You should see:
 2. Verify all required secrets:
    - `HEDRA_API_KEY`
    - `DEEPGRAM_API_KEY`
-   - `ELEVEN_API_KEY`
+   - `CARTESIA_API_KEY`
    - `OPENAI_API_KEY` or `OPENROUTER_API_KEY`
 
 3. Check agent logs for initialization errors:
@@ -200,6 +211,7 @@ You should see:
 **Problem:** Frontend can't connect to LiveKit room.
 
 **Solutions:**
+
 1. Verify `NEXT_PUBLIC_LIVEKIT_URL` is correct
 2. Check `LIVEKIT_API_KEY` and `LIVEKIT_API_SECRET` are set
 3. Verify room creation API works: `/api/hedra/room`

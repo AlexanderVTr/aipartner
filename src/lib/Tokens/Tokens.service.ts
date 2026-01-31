@@ -1,5 +1,8 @@
 'use server'
-import { TOKENS_PER_PLAN } from '@/constants/chat'
+import {
+  TOKENS_PER_PLAN,
+  VIDEO_CALL_TOKENS_PER_MINUTE,
+} from '@/constants/chat'
 import { supabaseAdmin } from '@/lib/ai/supabase/client'
 import { auth, currentUser } from '@clerk/nextjs/server'
 
@@ -134,6 +137,41 @@ export async function decrementTokensDB() {
 
     if (error) return
   }
+}
+
+export async function deductVideoCallTokens(
+  callDurationMinutes: number,
+): Promise<number> {
+  const user = await currentUser()
+  if (!user) return 0
+
+  const { data } = await supabaseAdmin
+    .from('users')
+    .select('tokens_balance')
+    .eq('clerk_user_id', user.id)
+    .single()
+
+  if (!data) return 0
+
+  const currentBalance = data.tokens_balance ?? 0
+  const tokensToDeduct =
+    Math.ceil(callDurationMinutes) * VIDEO_CALL_TOKENS_PER_MINUTE
+  const newBalance = Math.max(0, currentBalance - tokensToDeduct)
+
+  const { error } = await supabaseAdmin
+    .from('users')
+    .update({
+      tokens_balance: newBalance,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('clerk_user_id', user.id)
+
+  if (error) {
+    console.error('Error deducting video call tokens:', error)
+    return currentBalance
+  }
+
+  return newBalance
 }
 
 export async function resetTokensForPlan(
