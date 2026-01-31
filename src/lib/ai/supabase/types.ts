@@ -3,7 +3,9 @@ export interface User {
   clerk_user_id: string
   email: string
   tokens_balance: number
+  plan: 'free' | 'pro' | 'premium' | 'demo'
   created_at: string
+  updated_at?: string
 }
 
 export interface Message {

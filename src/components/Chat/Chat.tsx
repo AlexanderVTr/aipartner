@@ -20,7 +20,7 @@ import { getMessages, saveMessageToDB } from '@/lib/History/History.service'
 import { useUser } from '@clerk/nextjs'
 import DateDivider from '@/components/UI/DateDivider/DateDivider'
 // import SpeechToTextSimpleButton from '@/components/SpeechToTextSimpleButton/SpeechToTextSimpleButton'
-import VideoCallButton from '@/components/VideoCallButton/VideoCallButton'
+import HedraVideoCallButton from '@/components/HedraVideoCallButton/HedraVideoCallButton'
 
 export default function Chat() {
   const router = useRouter()
@@ -227,7 +227,7 @@ export default function Chat() {
           value={input}
         />
         <div className={styles.actions}>
-          <VideoCallButton />
+          <HedraVideoCallButton />
           {/* <SpeechToTextAdvancedButton
             currentInput={input}
             onMessageSend={handleSendMessage}

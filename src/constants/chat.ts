@@ -34,7 +34,12 @@ export const TOKENS_PER_PLAN = {
   pro: 2999,
   premium: 9990,
   free: 100,
+  demo: 9990,
 } as const
+
+export const VIDEO_CALL_TOKENS_PER_MINUTE = 100
+
+export const GUEST_TOKENS_STORAGE_KEY = 'aime_guest_tokens'
 
 export const PER_PAGE = 20
 export const SILENCE_THRESHOLD = 10

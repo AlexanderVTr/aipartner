@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Environment files (secrets should be set via LiveKit Cloud secrets)
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation
+*.md
+README.md
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Node modules (not needed for agent)
+node_modules/
+.next/
+
+# Other
+.DS_Store
+*.log
