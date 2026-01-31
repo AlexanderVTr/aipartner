@@ -20,12 +20,12 @@
   max-width: 400px;
 
   //Uncomment when Premium will be ready
-  .cl-pricingTableCard {
-    &:nth-last-child(1) {
-      opacity: 0.5;
-      pointer-events: none;
-    }
-  }
+  // .cl-pricingTableCard {
+  //   &:nth-last-child(1) {
+  //     opacity: 0.5;
+  //     pointer-events: none;
+  //   }
+  // }
 }
 
 .cl-pricingTableCardFooterButton {
