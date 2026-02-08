@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
+import { Video, X, Mic, MicOff } from 'lucide-react'
 import styles from '../VideoCallButton/VideoCallButton.module.scss'
 import { hedraConfig } from '@/lib/ai/Hedra/avatarConfig'
 import { getHedraToken, createLiveKitRoom } from '@/lib/ai/Hedra/getToken'
@@ -671,9 +671,9 @@ export default function HedraVideoCallButton() {
               {isVoiceChatActive ? <MicOff size={18} /> : <Mic size={18} />}
             </button>
             <button
-              className={`${styles.button}`}
+              className={`${styles.button} ${styles.buttonOff}`}
               onClick={() => handleVideoCallOff()}>
-              <VideoOff size={18} />
+              <X size={18} />
             </button>
           </div>
         </div>

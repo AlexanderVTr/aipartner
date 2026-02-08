@@ -21,6 +21,10 @@
   &.buttonOn {
     background-color: var(--gradient-end);
   }
+
+  &.buttonOff {
+    background-color: #7c022c;
+  }
 }
 
 .callFrame {

@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Video, VideoOff, Mic, MicOff } from 'lucide-react'
+import { Video, X, Mic, MicOff } from 'lucide-react'
 import styles from './VideoCallButton.module.scss'
 import StreamingAvatar, { StreamingEvents } from '@heygen/streaming-avatar'
 import { avatarConfig } from '@/lib/ai/HeyGen/avatarConfig'
@@ -261,9 +261,9 @@ export default function VideoCallButton() {
               {isVoiceChatActive ? <MicOff size={18} /> : <Mic size={18} />}
             </button>
             <button
-              className={`${styles.button}`}
+              className={`${styles.button} ${styles.buttonOff}`}
               onClick={() => handleVideoCallOff()}>
-              <VideoOff size={18} />
+              <X size={18} />
             </button>
           </div>
         </div>
