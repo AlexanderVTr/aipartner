@@ -18,7 +18,9 @@ import {
   Track,
   RemoteTrack,
   RemoteParticipant,
+  RemoteTrackPublication,
   TrackPublication,
+  VideoQuality,
 } from 'livekit-client'
 
 export default function HedraVideoCallButton() {
@@ -98,7 +100,9 @@ export default function HedraVideoCallButton() {
                 isSubscribed: publication.isSubscribed,
                 track: !!publication.track,
               })
-
+              if (publication instanceof RemoteTrackPublication) {
+                publication.setVideoQuality(VideoQuality.HIGH)
+              }
               if (publication.track && videoRef.current) {
                 console.log(
                   'Attaching existing video track from',
@@ -182,6 +186,9 @@ export default function HedraVideoCallButton() {
               participant.videoTrackPublications.size,
             )
             participant.videoTrackPublications.forEach((publication) => {
+              if (publication instanceof RemoteTrackPublication) {
+                publication.setVideoQuality(VideoQuality.HIGH)
+              }
               console.log('Video publication:', {
                 trackSid: publication.trackSid,
                 isSubscribed: publication.isSubscribed,
@@ -244,7 +251,9 @@ export default function HedraVideoCallButton() {
             )
 
             if (track.kind === Track.Kind.Video && videoRef.current) {
-              // Attach video track to video element
+              if (publication instanceof RemoteTrackPublication) {
+                publication.setVideoQuality(VideoQuality.HIGH)
+              }
               console.log('Attaching subscribed video track to element')
               track.attach(videoRef.current)
               videoRef.current.play().catch((error) => {
